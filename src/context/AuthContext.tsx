@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import type { ReactNode, FC } from "react";
+import type { ReactNode } from "react";
 import type { Tokens, UserInfo } from "@/types/auth";
 import { getFromStorage, saveToStorage, removeFromStorage, STORAGE_KEYS } from "@/utils/storage";
 import { AuthContext, type AuthContextType, type AuthState } from "./AuthContexts";

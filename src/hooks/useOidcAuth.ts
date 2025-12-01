@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { OidcService } from "@/services/oidc.service";
 import type { OidcConfig, Tokens, UserInfo } from "@/types/auth";
 import { useAuthContext } from "./useAuthContext";

@@ -1,29 +1,25 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import "./App.css";
 import { AuthProvider } from "@/context/AuthContext";
-import { OidcDemo } from "@/components/OidcDemo";
-import { SamlDemo } from "@/components/SamlDemo";
+import { Routes, Route, Link } from "react-router-dom";
+import OidcDemoPage from "@/pages/OidcDemoPage";
+import SamlDemoPage from "@/pages/SamlDemoPage";
 
 function AppContent() {
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const codeParam = params.get("code");
-    if (codeParam) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, []);
-
   return (
     <div className="container" style={{ maxWidth: "100%", margin: 0, padding: "1rem" }}>
       <h1 style={{ textAlign: "center", marginBottom: "2rem" }}>Que-ID Service Provider Demo</h1>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-        <div>
-          <OidcDemo />
-        </div>
-        <div>
-          <SamlDemo />
-        </div>
-      </div>
+      <nav style={{ textAlign: "center", marginBottom: "2rem" }}>
+        <Link to="/oidc" style={{ marginRight: "2rem" }}>
+          OIDC Demo
+        </Link>
+        <Link to="/saml">SAML Demo</Link>
+      </nav>
+      <Routes>
+        <Route path="/oidc" element={<OidcDemoPage />} />
+        <Route path="/saml" element={<SamlDemoPage />} />
+        <Route path="*" element={<div style={{ textAlign: "center" }}>Select a demo above.</div>} />
+      </Routes>
     </div>
   );
 }

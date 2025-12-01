@@ -4,10 +4,10 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 
 const defaultConfig: OidcConfig = {
-  issuer: import.meta.env.VITE_OIDC_ISSUER || "",
-  clientId: import.meta.env.VITE_CLIENT_ID || "",
-  redirectUri: window.location.origin,
-  scopes: ["openid", "profile", "email"],
+  issuer: "",
+  clientId: "",
+  redirectUri: "",
+  scopes: [],
 };
 
 function getCodeFromUrl(): string {

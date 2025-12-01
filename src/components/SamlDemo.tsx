@@ -4,12 +4,12 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useSamlAuth } from "@/hooks/useSamlAuth";
 
 const defaultConfig: SamlConfig = {
-  spName: "Demo Service Provider",
-  entityId: "urn:queid:sp:demo",
-  acsUrl: `${window.location.origin}/saml/acs`,
-  nameIdFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
-  sloUrl: `${window.location.origin}/saml/slo`,
-  sloBinding: "REDIRECT",
+  spName: "",
+  entityId: "",
+  acsUrl: "",
+  nameIdFormat: "",
+  sloUrl: "",
+  sloBinding: "",
   idpSsoUrl: "",
   idpSloUrl: "",
 };
@@ -246,21 +246,28 @@ export function SamlDemo() {
         <div style={{ marginBottom: "1.5rem", width: "100%", boxSizing: "border-box" }}>
           <h3>SP Metadata</h3>
           <div style={{ width: "100%", overflowX: "auto" }}>
-            <pre
-              style={{
-                background: "#fff",
-                color: "#111",
-                padding: "1rem",
-                borderRadius: 4,
-                border: "1px solid #e5e7eb",
-                overflow: "auto",
-                maxHeight: "300px",
-                fontSize: "0.75rem",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-all",
-              }}>
-              {samlAuth.generateMetadata()}
-            </pre>
+            {samlAuth.isConfigured ? (
+              <pre
+                style={{
+                  background: "#fff",
+                  color: "#111",
+                  padding: "1rem",
+                  borderRadius: 4,
+                  border: "1px solid #e5e7eb",
+                  overflow: "auto",
+                  maxHeight: "300px",
+                  fontSize: "0.75rem",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-all",
+                }}>
+                {samlAuth.generateMetadata()}
+              </pre>
+            ) : (
+              <div style={{ color: "#991b1b", padding: "1rem" }}>
+                Please fill in <strong>Entity ID</strong> and <strong>ACS URL</strong> to generate
+                metadata.
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -243,20 +243,25 @@ export function SamlDemo() {
       </div>
 
       {showMetadata && (
-        <div style={{ marginBottom: "1.5rem" }}>
+        <div style={{ marginBottom: "1.5rem", width: "100%", boxSizing: "border-box" }}>
           <h3>SP Metadata</h3>
-          <pre
-            style={{
-              background: "#fff",
-              padding: "1rem",
-              borderRadius: 4,
-              border: "1px solid #e5e7eb",
-              overflow: "auto",
-              maxHeight: "300px",
-              fontSize: "0.75rem",
-            }}>
-            {samlAuth.generateMetadata()}
-          </pre>
+          <div style={{ width: "100%", overflowX: "auto" }}>
+            <pre
+              style={{
+                background: "#fff",
+                color: "#111",
+                padding: "1rem",
+                borderRadius: 4,
+                border: "1px solid #e5e7eb",
+                overflow: "auto",
+                maxHeight: "300px",
+                fontSize: "0.75rem",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-all",
+              }}>
+              {samlAuth.generateMetadata()}
+            </pre>
+          </div>
         </div>
       )}
 

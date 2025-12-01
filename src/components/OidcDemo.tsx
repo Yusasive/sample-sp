@@ -20,7 +20,7 @@ export function OidcDemo() {
   const [config, setConfig] = useState<OidcConfig>(defaultConfig);
   const [code, setCode] = useState<string>(getCodeFromUrl());
   const oidcAuth = useOidcAuth(config);
-  const [issuerWarning, setIssuerWarning] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (code) {
@@ -67,7 +67,10 @@ export function OidcDemo() {
           <input
             type="text"
             value={config.issuer}
-            onChange={(e) => setConfig({ ...config, issuer: e.target.value })}
+            onChange={(e) => {
+              setConfig({ ...config, issuer: e.target.value });
+              setError("");
+            }}
             placeholder="https://api.que.id/oidc/acme"
             style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
           />
@@ -81,7 +84,10 @@ export function OidcDemo() {
           <input
             type="text"
             value={config.clientId}
-            onChange={(e) => setConfig({ ...config, clientId: e.target.value })}
+            onChange={(e) => {
+              setConfig({ ...config, clientId: e.target.value });
+              setError("");
+            }}
             placeholder="app_xxxx"
             style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
           />
@@ -95,7 +101,10 @@ export function OidcDemo() {
           <input
             type="password"
             value={config.clientSecret || ""}
-            onChange={(e) => setConfig({ ...config, clientSecret: e.target.value || undefined })}
+            onChange={(e) => {
+              setConfig({ ...config, clientSecret: e.target.value || undefined });
+              setError("");
+            }}
             placeholder="for confidential clients"
             style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
           />
@@ -109,7 +118,10 @@ export function OidcDemo() {
           <input
             type="text"
             value={config.redirectUri}
-            onChange={(e) => setConfig({ ...config, redirectUri: e.target.value })}
+            onChange={(e) => {
+              setConfig({ ...config, redirectUri: e.target.value });
+              setError("");
+            }}
             placeholder="https://localhost:5173"
             style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
           />
@@ -123,9 +135,10 @@ export function OidcDemo() {
           <input
             type="text"
             value={config.scopes?.join(" ") || ""}
-            onChange={(e) =>
-              setConfig({ ...config, scopes: e.target.value.split(" ").filter(Boolean) })
-            }
+            onChange={(e) => {
+              setConfig({ ...config, scopes: e.target.value.split(" ").filter(Boolean) });
+              setError("");
+            }}
             placeholder="openid profile email"
             style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
           />
@@ -135,14 +148,23 @@ export function OidcDemo() {
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
         <button
           onClick={() => {
-            if (!config.issuer) {
-              setIssuerWarning("Issuer URL is required.");
+            // Validate required fields
+            if (!config.issuer || !config.clientId || !config.redirectUri) {
+              setError("Please fill in Issuer URL, Client ID, and Redirect URI.");
               return;
             }
-            setIssuerWarning("");
+            // Optionally, validate URL format
+            try {
+              new URL(config.issuer);
+              new URL(config.redirectUri);
+            } catch {
+              setError("Issuer URL and Redirect URI must be valid URLs.");
+              return;
+            }
+            setError("");
             oidcAuth.startLogin();
           }}
-          disabled={auth.isLoading || !oidcAuth.isConfigured}
+          disabled={auth.isLoading}
           style={{
             background: "#2563eb",
             color: "#fff",
@@ -154,11 +176,33 @@ export function OidcDemo() {
           }}>
           {auth.isLoading ? "Starting..." : "Login with OIDC"}
         </button>
-        {issuerWarning && (
-          <div style={{ color: "#991b1b", marginTop: "0.5rem" }}>{issuerWarning}</div>
-        )}
       </div>
 
+      {error && (
+        <div
+          style={{
+            color: "#991b1b",
+            marginTop: "1rem",
+            border: "1px solid #fca5a5",
+            padding: "1rem",
+            borderRadius: 4,
+            background: "#fee2e2",
+          }}>
+          <strong>Error:</strong> {error}
+          <button
+            style={{
+              marginLeft: "1rem",
+              background: "transparent",
+              border: "none",
+              color: "#991b1b",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+            onClick={() => setError("")}>
+            Dismiss
+          </button>
+        </div>
+      )}
       {auth.tokens && (
         <div style={{ marginTop: "1.5rem" }}>
           <h3>Tokens</h3>

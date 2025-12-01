@@ -17,6 +17,10 @@ export interface UseSamlAuthReturn {
 export function useSamlAuth(config: SamlConfig): UseSamlAuthReturn {
   const auth = useAuthContext();
   const samlServiceRef = useRef<SamlService | null>(null);
+  // Initialize SAML service if config is valid
+  if (!samlServiceRef.current && config.entityId && config.acsUrl) {
+    samlServiceRef.current = new SamlService(config);
+  }
 
   const generateMetadata = useCallback((): string => {
     if (!samlServiceRef.current) {

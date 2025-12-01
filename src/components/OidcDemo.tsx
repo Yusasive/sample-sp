@@ -21,6 +21,7 @@ export function OidcDemo() {
   const [code, setCode] = useState<string>(getCodeFromUrl());
   const oidcAuth = useOidcAuth(config);
   const [error, setError] = useState<string>("");
+  const [localLoading, setLocalLoading] = useState(false);
 
   useEffect(() => {
     if (code) {
@@ -147,7 +148,7 @@ export function OidcDemo() {
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
         <button
-          onClick={() => {
+          onClick={async () => {
             // Validate required fields
             if (!config.issuer || !config.clientId || !config.redirectUri) {
               setError("Please fill in Issuer URL, Client ID, and Redirect URI.");
@@ -162,9 +163,14 @@ export function OidcDemo() {
               return;
             }
             setError("");
-            oidcAuth.startLogin();
+            setLocalLoading(true);
+            try {
+              await oidcAuth.startLogin();
+            } finally {
+              setLocalLoading(false);
+            }
           }}
-          disabled={auth.isLoading}
+          disabled={localLoading}
           style={{
             background: "#2563eb",
             color: "#fff",
@@ -172,9 +178,9 @@ export function OidcDemo() {
             borderRadius: 6,
             padding: "10px 16px",
             cursor: "pointer",
-            opacity: auth.isLoading ? 0.7 : 1,
+            opacity: localLoading ? 0.7 : 1,
           }}>
-          {auth.isLoading ? "Starting..." : "Login with OIDC"}
+          {localLoading ? "Starting..." : "Login with OIDC"}
         </button>
       </div>
 

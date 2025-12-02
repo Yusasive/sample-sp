@@ -4,14 +4,14 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useSamlAuth } from "@/hooks/useSamlAuth";
 
 const defaultConfig: SamlConfig = {
-  spName: "",
-  entityId: "",
-  acsUrl: "",
-  nameIdFormat: "",
-  sloUrl: "",
-  sloBinding: "",
-  idpSsoUrl: "",
-  idpSloUrl: "",
+  spName: import.meta.env.VITE_SAML_SP_NAME || "",
+  entityId: import.meta.env.VITE_SAML_ENTITY_ID || "",
+  acsUrl: import.meta.env.VITE_SAML_ACS_URL || "",
+  nameIdFormat: import.meta.env.VITE_SAML_NAMEID_FORMAT || "",
+  sloUrl: import.meta.env.VITE_SAML_SLO_URL || "",
+  sloBinding: import.meta.env.VITE_SAML_SLO_BINDING || "",
+  idpSsoUrl: import.meta.env.VITE_SAML_IDP_SSO_URL || "",
+  idpSloUrl: import.meta.env.VITE_SAML_IDP_SLO_URL || "",
 };
 
 export function SamlDemo() {
@@ -187,13 +187,16 @@ export function SamlDemo() {
           disabled={auth.isLoading || !samlAuth.isConfigured || !config.idpSsoUrl}
           style={{
             background: "#2563eb",
-            color: "#fff",
+            color: "#111",
             border: "none",
             borderRadius: 6,
             padding: "10px 16px",
             cursor: "pointer",
             opacity: auth.isLoading || !config.idpSsoUrl ? 0.7 : 1,
             fontSize: "0.95rem",
+            fontWeight: 700,
+            textShadow: "none",
+            letterSpacing: 0.5,
           }}>
           {auth.isLoading ? "Starting..." : "Login with SAML"}
         </button>

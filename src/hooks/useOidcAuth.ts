@@ -12,6 +12,7 @@ export interface UseOidcAuthReturn {
   fetchUserInfo: () => Promise<UserInfo>;
   refreshToken: () => Promise<Tokens>;
   revokeToken: (tokenHint?: "access_token" | "refresh_token") => Promise<void>;
+  getLogoutUrl?: (idToken: string) => Promise<string | undefined>;
   isConfigured: boolean;
 }
 
@@ -150,12 +151,24 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
     [auth],
   );
 
+  const getLogoutUrl = useCallback(async (idToken: string): Promise<string | undefined> => {
+    if (!oidcServiceRef.current) return undefined;
+    if (!idToken) return undefined;
+    // OidcService may not have getLogoutUrl, so add it if missing
+    if (typeof (oidcServiceRef.current as any).getLogoutUrl === "function") {
+      return await (oidcServiceRef.current as any).getLogoutUrl(idToken);
+    }
+    // fallback: build a basic logout URL if needed
+    return undefined;
+  }, []);
+
   return {
     startLogin,
     exchangeCode,
     fetchUserInfo,
     refreshToken,
     revokeToken,
+    getLogoutUrl,
     isConfigured: !!oidcServiceRef.current,
   };
 }

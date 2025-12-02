@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { OidcConfig } from "@/types/auth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 
 const defaultConfig: OidcConfig = {
-  issuer: "",
-  clientId: "",
-  redirectUri: "",
-  scopes: [],
+  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
+  redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || "",
+  scopes: ["openid", "profile", "email"],
 };
 
 function getCodeFromUrl(): string {
@@ -21,13 +21,27 @@ export function OidcDemo() {
   const [code, setCode] = useState<string>(getCodeFromUrl());
   const oidcAuth = useOidcAuth(config);
   const [error, setError] = useState<string>("");
+  const errorTimeoutRef = useRef<number | null>(null);
   const [localLoading, setLocalLoading] = useState(false);
+  // Store errorDetails as a string for safe rendering
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
   useEffect(() => {
     if (code) {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, [code]);
+
+  // Auto-dismiss error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = setTimeout(() => setError(""), 5000);
+    }
+    return () => {
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    };
+  }, [error]);
 
   useEffect(() => {
     if (code) {
@@ -37,7 +51,32 @@ export function OidcDemo() {
           await oidcAuth.exchangeCode(code);
           setCode("");
         } catch (error) {
+          setError(
+            "Token exchange failed: " + (error instanceof Error ? error.message : "Unknown error"),
+          );
+          let details: string;
+          if (typeof error === "string") {
+            details = error;
+          } else if (error instanceof Error) {
+            details = error.stack || error.message;
+          } else if (typeof error === "object" && error !== null) {
+            try {
+              details = JSON.stringify(error, Object.getOwnPropertyNames(error), 2);
+            } catch {
+              details = "[Unable to display error details]";
+            }
+          } else {
+            details = String(error);
+          }
+          setErrorDetails(details);
           console.error("Token exchange failed:", error);
+          if (error instanceof Error) {
+            auth.setError(error.message);
+          } else if (typeof error === "object" && error && "message" in error) {
+            auth.setError((error as { message: string }).message);
+          } else {
+            auth.setError("An unknown error occurred");
+          }
         }
       })();
     }
@@ -56,8 +95,53 @@ export function OidcDemo() {
         borderRadius: 12,
         background: "#f8fafc",
         padding: "2em",
+        position: "relative",
+        minHeight: "600px",
       }}>
       <h2 style={{ color: "black" }}>OIDC Configuration & Flow</h2>
+
+      {/* Prominent error display at top */}
+      {error && (
+        <div
+          style={{
+            position: "absolute",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10,
+            minWidth: 320,
+            maxWidth: 480,
+            background: "#fee2e2",
+            color: "#991b1b",
+            border: "2px solid #fca5a5",
+            borderRadius: 8,
+            boxShadow: "0 2px 8px #e0e7ef",
+            padding: "1.2rem 1.5rem",
+            fontWeight: 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem",
+          }}>
+          <span>
+            <strong>Error:</strong> {error}
+          </span>
+          <button
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#991b1b",
+              cursor: "pointer",
+              textDecoration: "underline",
+              fontWeight: 500,
+              fontSize: "1rem",
+            }}
+            onClick={() => setError("")}
+            aria-label="Dismiss error">
+            Dismiss
+          </button>
+        </div>
+      )}
 
       <div style={{ display: "grid", gap: "1rem", marginBottom: "1.5rem" }}>
         <div>
@@ -173,42 +257,90 @@ export function OidcDemo() {
           disabled={localLoading}
           style={{
             background: "#2563eb",
-            color: "#fff",
+            color: "#111",
             border: "none",
             borderRadius: 6,
             padding: "10px 16px",
             cursor: "pointer",
             opacity: localLoading ? 0.7 : 1,
+            fontWeight: 700,
+            textShadow: "none",
+            letterSpacing: 0.5,
           }}>
           {localLoading ? "Starting..." : "Login with OIDC"}
         </button>
+        {/* Prominent error display at top with details */}
+        {error && (
+          <div
+            style={{
+              position: "absolute",
+              top: 20,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 10,
+              minWidth: 320,
+              maxWidth: 480,
+              background: "#fee2e2",
+              color: "#991b1b",
+              border: "2px solid #fca5a5",
+              borderRadius: 8,
+              boxShadow: "0 2px 8px #e0e7ef",
+              padding: "1.2rem 1.5rem",
+              fontWeight: 500,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.5rem",
+            }}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}>
+              <span>
+                <strong>Error:</strong> {error}
+              </span>
+              <button
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#991b1b",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  fontWeight: 500,
+                  fontSize: "1rem",
+                }}
+                onClick={() => {
+                  setError("");
+                  setErrorDetails(null);
+                }}
+                aria-label="Dismiss error">
+                Dismiss
+              </button>
+            </div>
+            {errorDetails && (
+              <pre
+                style={{
+                  background: "#fff0f0",
+                  color: "#991b1b",
+                  borderRadius: 4,
+                  border: "1px solid #fca5a5",
+                  padding: "0.75rem",
+                  fontSize: "0.85rem",
+                  maxHeight: 180,
+                  overflow: "auto",
+                  width: "100%",
+                }}>
+                {errorDetails}
+              </pre>
+            )}
+          </div>
+        )}
       </div>
 
-      {error && (
-        <div
-          style={{
-            color: "#991b1b",
-            marginTop: "1rem",
-            border: "1px solid #fca5a5",
-            padding: "1rem",
-            borderRadius: 4,
-            background: "#fee2e2",
-          }}>
-          <strong>Error:</strong> {error}
-          <button
-            style={{
-              marginLeft: "1rem",
-              background: "transparent",
-              border: "none",
-              color: "#991b1b",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
-            onClick={() => setError("")}>
-            Dismiss
-          </button>
-        </div>
-      )}
+      {/* ...existing code... */}
       {auth.tokens && (
         <div style={{ marginTop: "1.5rem" }}>
           <h3>Tokens</h3>

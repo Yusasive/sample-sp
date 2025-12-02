@@ -1,26 +1,55 @@
-// import { useEffect } from "react";
 import "./App.css";
 import { AuthProvider } from "@/context/AuthContext";
-import { Routes, Route, Link } from "react-router-dom";
-import OidcDemoPage from "@/pages/OidcDemoPage";
-import SamlDemoPage from "@/pages/SamlDemoPage";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { LoginPage } from "@/pages/LoginPage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { ProfilePage } from "@/pages/ProfilePage";
+import { TokensPage } from "@/pages/TokensPage";
+import { OidcCallbackPage } from "@/pages/OidcCallbackPage";
+import { SamlCallbackPage } from "@/pages/SamlCallbackPage";
+import Callback from "@/Callback";
 
 function AppContent() {
   return (
-    <div className="container" style={{ maxWidth: "100%", margin: 0, padding: "1rem" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "2rem" }}>Que-ID Service Provider Demo</h1>
-      <nav style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <Link to="/oidc" style={{ marginRight: "2rem" }}>
-          OIDC Demo
-        </Link>
-        <Link to="/saml">SAML Demo</Link>
-      </nav>
+    <>
+      <Navigation />
       <Routes>
-        <Route path="/oidc" element={<OidcDemoPage />} />
-        <Route path="/saml" element={<SamlDemoPage />} />
-        <Route path="*" element={<div style={{ textAlign: "center" }}>Select a demo above.</div>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/callback" element={<Callback />} />
+        <Route path="/callback/oidc" element={<OidcCallbackPage />} />
+        <Route path="/saml/acs" element={<SamlCallbackPage />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tokens"
+          element={
+            <ProtectedRoute>
+              <TokensPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </div>
+    </>
   );
 }
 

@@ -17,7 +17,7 @@ function getCodeFromUrl(): string {
 
 export function OidcDemo() {
   const auth = useAuthContext();
-  const [config, setConfig] = useState<OidcConfig>(defaultConfig);
+  const [config] = useState<OidcConfig>(defaultConfig);
   const [code, setCode] = useState<string>(getCodeFromUrl());
   const oidcAuth = useOidcAuth(config);
   const [error, setError] = useState<string>("");
@@ -143,92 +143,7 @@ export function OidcDemo() {
         </div>
       )}
 
-      <div style={{ display: "grid", gap: "1rem", marginBottom: "1.5rem" }}>
-        <div>
-          <label
-            style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500, color: "#1e293b" }}>
-            Issuer URL
-          </label>
-          <input
-            type="text"
-            value={config.issuer}
-            onChange={(e) => {
-              setConfig({ ...config, issuer: e.target.value });
-              setError("");
-            }}
-            placeholder="https://api.que.id/oidc/acme"
-            style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
-          />
-        </div>
-
-        <div>
-          <label
-            style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500, color: "#1e293b" }}>
-            Client ID
-          </label>
-          <input
-            type="text"
-            value={config.clientId}
-            onChange={(e) => {
-              setConfig({ ...config, clientId: e.target.value });
-              setError("");
-            }}
-            placeholder="app_xxxx"
-            style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
-          />
-        </div>
-
-        <div>
-          <label
-            style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500, color: "#1e293b" }}>
-            Client Secret (optional)
-          </label>
-          <input
-            type="password"
-            value={config.clientSecret || ""}
-            onChange={(e) => {
-              setConfig({ ...config, clientSecret: e.target.value || undefined });
-              setError("");
-            }}
-            placeholder="for confidential clients"
-            style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
-          />
-        </div>
-
-        <div>
-          <label
-            style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500, color: "#1e293b" }}>
-            Redirect URI
-          </label>
-          <input
-            type="text"
-            value={config.redirectUri}
-            onChange={(e) => {
-              setConfig({ ...config, redirectUri: e.target.value });
-              setError("");
-            }}
-            placeholder="https://localhost:5173"
-            style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
-          />
-        </div>
-
-        <div>
-          <label
-            style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500, color: "#1e293b" }}>
-            Scopes
-          </label>
-          <input
-            type="text"
-            value={config.scopes?.join(" ") || ""}
-            onChange={(e) => {
-              setConfig({ ...config, scopes: e.target.value.split(" ").filter(Boolean) });
-              setError("");
-            }}
-            placeholder="openid profile email"
-            style={{ width: "100%", padding: "0.5rem", borderRadius: 4, border: "1px solid #ccc" }}
-          />
-        </div>
-      </div>
+      {/* Config form removed: always use .env values, never show config UI */}
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
         <button

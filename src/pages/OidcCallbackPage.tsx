@@ -4,11 +4,11 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 import type { OidcConfig } from "@/types/auth";
 
-
-const mockConfig: OidcConfig = {
-  issuer: "",
-  clientId: "",
-  redirectUri: `${window.location.origin}/callback`,
+const oidcConfig: OidcConfig = {
+  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
+  clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET || undefined,
+  redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };
 
@@ -17,7 +17,7 @@ export function OidcCallbackPage() {
   const auth = useAuthContext();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
-  const oidcAuth = useOidcAuth(mockConfig);
+  const oidcAuth = useOidcAuth(oidcConfig);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -31,6 +31,7 @@ export function OidcCallbackPage() {
         auth.setError(null);
 
         await oidcAuth.exchangeCode(code);
+        await oidcAuth.fetchUserInfo(); // Fetch user details after login
         auth.setAuthMethod("oidc");
 
         setTimeout(() => {

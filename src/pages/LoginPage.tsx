@@ -5,24 +5,36 @@ import { useOidcAuth } from "@/hooks/useOidcAuth";
 import { useSamlAuth } from "@/hooks/useSamlAuth";
 
 const DEFAULT_OIDC_CONFIG: OidcConfig = {
-  issuer: "",
-  clientId: "",
-  redirectUri: `${window.location.origin}/callback`,
+  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
+  clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET || undefined,
+  redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };
 
 const DEFAULT_SAML_CONFIG: SamlConfig = {
-  entityId: `${window.location.origin}/saml/metadata`,
-  acsUrl: `${window.location.origin}/saml/acs`,
-  spName: "Que-ID Service Provider",
-  nameIdFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  entityId: import.meta.env.VITE_SAML_ENTITY_ID || `${window.location.origin}/saml/metadata`,
+  acsUrl: import.meta.env.VITE_SAML_ACS_URL || `${window.location.origin}/saml/acs`,
+  spName: import.meta.env.VITE_SAML_SP_NAME || "Que-ID Service Provider",
+  nameIdFormat:
+    import.meta.env.VITE_SAML_NAMEID_FORMAT ||
+    "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  idpSsoUrl: import.meta.env.VITE_SAML_IDP_SSO_URL || "",
+  idpSloUrl: import.meta.env.VITE_SAML_IDP_SLO_URL || "",
 };
 
 export function LoginPage() {
+  // Debug log to verify .env values
+  console.log("OIDC ENV CONFIG:", {
+    issuer: import.meta.env.VITE_OIDC_ISSUER_URL,
+    clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
+    clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET,
+    redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+  });
   const auth = useAuthContext();
   const [authMethod, setAuthMethod] = useState<"oidc" | "saml" | null>(null);
-  const [oidcConfig, setOidcConfig] = useState(DEFAULT_OIDC_CONFIG);
-  const [samlConfig, setSamlConfig] = useState(DEFAULT_SAML_CONFIG);
+  const [oidcConfig] = useState(DEFAULT_OIDC_CONFIG);
+  const [samlConfig] = useState(DEFAULT_SAML_CONFIG);
   const [error, setError] = useState("");
 
   const oidcAuth = useOidcAuth(oidcConfig);
@@ -151,181 +163,69 @@ export function LoginPage() {
           </div>
         ) : authMethod === "oidc" ? (
           <div style={{ display: "grid", gap: "1rem" }}>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>
-                Issuer URL
-              </label>
-              <input
-                type="text"
-                value={oidcConfig.issuer}
-                onChange={(e) => {
-                  setOidcConfig({ ...oidcConfig, issuer: e.target.value });
-                  setError("");
-                }}
-                placeholder="https://api.que.id/oidc/acme"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  fontSize: "0.95rem",
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>
-                Client ID
-              </label>
-              <input
-                type="text"
-                value={oidcConfig.clientId}
-                onChange={(e) => {
-                  setOidcConfig({ ...oidcConfig, clientId: e.target.value });
-                  setError("");
-                }}
-                placeholder="app_xxxx"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  fontSize: "0.95rem",
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>
-                Client Secret (optional)
-              </label>
-              <input
-                type="password"
-                value={oidcConfig.clientSecret || ""}
-                onChange={(e) => {
-                  setOidcConfig({
-                    ...oidcConfig,
-                    clientSecret: e.target.value || undefined,
-                  });
-                  setError("");
-                }}
-                placeholder="Leave empty for public clients"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  fontSize: "0.95rem",
-                }}
-              />
-            </div>
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
-              <button
-                onClick={handleOidcLogin}
-                disabled={auth.isLoading}
-                style={{
-                  flex: 1,
-                  padding: "0.75rem",
-                  background: "#667eea",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  opacity: auth.isLoading ? 0.7 : 1,
-                }}>
-                {auth.isLoading ? "Processing..." : "Login"}
-              </button>
-              <button
-                onClick={() => setAuthMethod(null)}
-                style={{
-                  flex: 1,
-                  padding: "0.75rem",
-                  background: "#e2e8f0",
-                  color: "#1e293b",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}>
-                Back
-              </button>
-            </div>
+            <button
+              onClick={handleOidcLogin}
+              disabled={auth.isLoading}
+              style={{
+                padding: "1.2rem",
+                background: "#667eea",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                fontWeight: 500,
+                cursor: "pointer",
+                opacity: auth.isLoading ? 0.7 : 1,
+                fontSize: "1rem",
+              }}>
+              {auth.isLoading ? "Processing..." : "Login with OIDC"}
+            </button>
+            <button
+              onClick={() => setAuthMethod(null)}
+              style={{
+                padding: "1.2rem",
+                background: "#e2e8f0",
+                color: "#1e293b",
+                border: "none",
+                borderRadius: 8,
+                fontWeight: 500,
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}>
+              Back
+            </button>
           </div>
         ) : (
           <div style={{ display: "grid", gap: "1rem" }}>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>
-                IdP SSO URL
-              </label>
-              <input
-                type="text"
-                value={samlConfig.idpSsoUrl || ""}
-                onChange={(e) => {
-                  setSamlConfig({ ...samlConfig, idpSsoUrl: e.target.value });
-                  setError("");
-                }}
-                placeholder="https://idp.example.com/sso"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  fontSize: "0.95rem",
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}>
-                IdP SLO URL (optional)
-              </label>
-              <input
-                type="text"
-                value={samlConfig.idpSloUrl || ""}
-                onChange={(e) => {
-                  setSamlConfig({ ...samlConfig, idpSloUrl: e.target.value });
-                  setError("");
-                }}
-                placeholder="https://idp.example.com/slo"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  fontSize: "0.95rem",
-                }}
-              />
-            </div>
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
-              <button
-                onClick={handleSamlLogin}
-                disabled={auth.isLoading}
-                style={{
-                  flex: 1,
-                  padding: "0.75rem",
-                  background: "#764ba2",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  opacity: auth.isLoading ? 0.7 : 1,
-                }}>
-                {auth.isLoading ? "Processing..." : "Login"}
-              </button>
-              <button
-                onClick={() => setAuthMethod(null)}
-                style={{
-                  flex: 1,
-                  padding: "0.75rem",
-                  background: "#e2e8f0",
-                  color: "#1e293b",
-                  border: "none",
-                  borderRadius: 6,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}>
-                Back
-              </button>
-            </div>
+            <button
+              onClick={handleSamlLogin}
+              disabled={auth.isLoading}
+              style={{
+                padding: "1.2rem",
+                background: "#764ba2",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                fontWeight: 500,
+                cursor: "pointer",
+                opacity: auth.isLoading ? 0.7 : 1,
+                fontSize: "1rem",
+              }}>
+              {auth.isLoading ? "Processing..." : "Login with SAML"}
+            </button>
+            <button
+              onClick={() => setAuthMethod(null)}
+              style={{
+                padding: "1.2rem",
+                background: "#e2e8f0",
+                color: "#1e293b",
+                border: "none",
+                borderRadius: 8,
+                fontWeight: 500,
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}>
+              Back
+            </button>
           </div>
         )}
       </div>

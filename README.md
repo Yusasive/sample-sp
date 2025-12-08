@@ -10,7 +10,7 @@ OIDC and SAML authentication flows with the Que-ID platform.
 - Automatic configuration via environment variables
 - Token management and refresh
 - User profile display
-- Logout support
+- Logout supports
 
 ## Configuration
 

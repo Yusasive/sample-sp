@@ -1,5 +1,5 @@
 import type { OidcConfig, SamlConfig } from "@/types/auth";
-import { saveToStorage, removeFromStorage, clearAllStorage, STORAGE_KEYS } from "./storage";
+import { saveToStorage, removeFromStorage, clearAllStorage } from "./storage";
 
 export interface LogoutOptions {
   postLogoutRedirectUri?: string;
@@ -34,7 +34,7 @@ export async function performOidcLogout(
   }
 }
 
-export async function performSamlLogout(config: SamlConfig, sessionIndex?: string): Promise<string> {
+export async function performSamlLogout(config: SamlConfig): Promise<string> {
   try {
     if (!config.idpSloUrl) {
       throw new Error("IdP SLO URL not configured");

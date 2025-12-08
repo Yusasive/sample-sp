@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
-import { useSamlAuth } from "@/hooks/useSamlAuth";
 import { useTokenManagement } from "@/hooks/useTokenManagement";
-import { getTokensExpirationStatus } from "@/utils/token";
-import type { OidcConfig, SamlConfig } from "@/types/auth";
+import type { OidcConfig } from "@/types/auth";
 
 const mockOidcConfig: OidcConfig = {
   issuer: "",
@@ -13,15 +11,11 @@ const mockOidcConfig: OidcConfig = {
   scopes: ["openid", "profile", "email"],
 };
 
-const mockSamlConfig: SamlConfig = {
-  entityId: `${window.location.origin}/saml/metadata`,
-  acsUrl: `${window.location.origin}/saml/acs`,
-};
+
 
 export function DashboardPage() {
   const auth = useAuthContext();
   const oidcAuth = useOidcAuth(mockOidcConfig);
-  const samlAuth = useSamlAuth(mockSamlConfig);
   const tokenStatus = useTokenManagement(mockOidcConfig);
 
   useEffect(() => {
@@ -31,15 +25,6 @@ export function DashboardPage() {
       }
     }
   }, [auth.tokens, auth.userInfo, auth.authMethod, oidcAuth]);
-
-  const formatDate = (date: string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
@@ -73,7 +58,13 @@ export function DashboardPage() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2rem" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "2rem",
+          marginBottom: "2rem",
+        }}>
         {/* User Profile Card */}
         <div
           style={{
@@ -195,7 +186,13 @@ export function DashboardPage() {
               <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
                 Status
               </label>
-              <div style={{ marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <div
+                style={{
+                  marginTop: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}>
                 <div
                   style={{
                     width: 12,
@@ -344,14 +341,14 @@ export function DashboardPage() {
         </h2>
         <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "1rem" }}>
           For detailed token management and inspection, visit the{" "}
-          <a
-            href="/tokens"
-            style={{ color: "#667eea", textDecoration: "none", fontWeight: 500 }}>
+          <a href="/tokens" style={{ color: "#667eea", textDecoration: "none", fontWeight: 500 }}>
             Tokens page
           </a>
         </p>
         <details style={{ cursor: "pointer" }}>
-          <summary style={{ color: "#667eea", fontWeight: 500 }}>View Full Token Data (Dev)</summary>
+          <summary style={{ color: "#667eea", fontWeight: 500 }}>
+            View Full Token Data (Dev)
+          </summary>
           <pre
             style={{
               background: "#fff",

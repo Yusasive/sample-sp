@@ -16,10 +16,10 @@ const defaultConfig: SamlConfig = {
 
 export function SamlDemo() {
   const auth = useAuthContext();
-  const [config, setConfig] = useState<SamlConfig>(defaultConfig);
+  const [config] = useState<SamlConfig>(defaultConfig);
   const [showMetadata, setShowMetadata] = useState(false);
   const [showAcsHandler, setShowAcsHandler] = useState(false);
-  const [acsResponse, setAcsResponse] = useState("");
+
   const samlAuth = useSamlAuth(config);
 
   useEffect(() => {
@@ -52,34 +52,6 @@ export function SamlDemo() {
   const handleStartLogin = () => {
     try {
       samlAuth.startLogin(config.idpSsoUrl);
-    } catch (error) {
-      auth.setError((error as Error).message);
-    }
-  };
-
-  const handleTestAcsResponse = () => {
-    if (!acsResponse.trim()) {
-      auth.setError("Please enter a base64-encoded SAML response");
-      return;
-    }
-    try {
-      samlAuth.handleAcsCallback(acsResponse);
-      setShowAcsHandler(false);
-      setAcsResponse("");
-    } catch (error) {
-      auth.setError((error as Error).message);
-    }
-  };
-
-  const handleStartLogout = () => {
-    if (!auth.userInfo?.sub) {
-      auth.setError("No user logged in");
-      return;
-    }
-    try {
-      const sessionIndex =
-        localStorage.getItem("saml_session_index") || "session-index-placeholder";
-      samlAuth.startLogout(sessionIndex, auth.userInfo.sub, config.idpSloUrl);
     } catch (error) {
       auth.setError((error as Error).message);
     }
@@ -170,6 +142,7 @@ export function SamlDemo() {
               {/* ...existing config form fields... */}
             </div>
           )}
+        </div>
       )}
 
       {auth.userInfo && auth.authMethod === "saml" && (

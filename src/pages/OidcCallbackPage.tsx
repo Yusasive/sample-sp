@@ -21,7 +21,10 @@ export function OidcCallbackPage() {
 
   useEffect(() => {
     const handleCallback = async () => {
+      console.log("Callback URL:", window.location.href);
+      console.log("Code:", code);
       if (!code) {
+        console.error("No code parameter found in callback URL.");
         navigate("/login", { replace: true });
         return;
       }
@@ -29,15 +32,17 @@ export function OidcCallbackPage() {
       try {
         auth.setIsLoading(true);
         auth.setError(null);
-
+        console.log("Exchanging code for tokens...");
         await oidcAuth.exchangeCode(code);
+        console.log("Fetching user info...");
         await oidcAuth.fetchUserInfo(); // Fetch user details after login
         auth.setAuthMethod("oidc");
-
+        console.log("OIDC login complete, redirecting to dashboard.");
         setTimeout(() => {
           navigate("/dashboard", { replace: true });
         }, 500);
       } catch (error) {
+        console.error("OIDC callback error:", error);
         auth.setError((error as Error).message || "Failed to complete OIDC login");
         setTimeout(() => {
           navigate("/login", { replace: true });

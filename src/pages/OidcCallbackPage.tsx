@@ -7,7 +7,6 @@ import type { OidcConfig } from "@/types/auth";
 const oidcConfig: OidcConfig = {
   issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
   clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
-  clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET || undefined,
   redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };

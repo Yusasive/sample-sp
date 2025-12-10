@@ -87,7 +87,12 @@ export class OidcService {
     });
 
     const discovery = await this.getDiscovery();
-    return `${discovery.authorization_endpoint}?${params.toString()}`;
+    // Ensure /api/ is present in the authorization endpoint
+    let authEndpoint = discovery.authorization_endpoint;
+    if (!authEndpoint.includes("/api/")) {
+      authEndpoint = authEndpoint.replace("://uni-que.id/", "://uni-que.id/api/");
+    }
+    return `${authEndpoint}?${params.toString()}`;
   }
 
   async exchangeCodeForTokens(
@@ -110,7 +115,13 @@ export class OidcService {
         body.client_secret = clientSecret;
       }
 
-      const response = await fetch(discovery.token_endpoint, {
+      // Patch token endpoint to always include /api/
+      let tokenEndpoint = discovery.token_endpoint;
+      if (!tokenEndpoint.includes("/api/")) {
+        tokenEndpoint = tokenEndpoint.replace("://uni-que.id/", "://uni-que.id/api/");
+      }
+
+      const response = await fetch(tokenEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -174,7 +185,13 @@ export class OidcService {
     try {
       const discovery = await this.getDiscovery();
 
-      const response = await fetch(`${discovery.issuer}/userinfo`, {
+      // Patch userinfo endpoint to always include /api/
+      let userinfoEndpoint = `${discovery.issuer}/userinfo`;
+      if (!userinfoEndpoint.includes("/api/")) {
+        userinfoEndpoint = userinfoEndpoint.replace("://uni-que.id/", "://uni-que.id/api/");
+      }
+
+      const response = await fetch(userinfoEndpoint, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
       });

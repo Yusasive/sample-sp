@@ -27,8 +27,8 @@ export function OidcCallbackPage() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      console.log("Callback URL:", window.location.href);
-      console.log("Code:", code);
+      console.debug("[OIDC] Callback URL:", window.location.href);
+      console.debug("[OIDC] Code:", code);
       if (!code) {
         console.error("No code parameter found in callback URL.");
         navigate("/login", { replace: true });
@@ -38,30 +38,32 @@ export function OidcCallbackPage() {
       try {
         auth.setIsLoading(true);
         auth.setError(null);
-        console.log("Exchanging code for tokens...");
+        console.debug("[OIDC] Exchanging code for tokens...");
         await oidcAuth.exchangeCode(code);
-        console.log("Fetching user info...");
+        console.debug("[OIDC] Fetching user info...");
         await oidcAuth.fetchUserInfo(); // Fetch user details after login
         auth.setAuthMethod("oidc");
-        console.log("OIDC login complete, redirecting to dashboard.");
+        console.debug("[OIDC] Login complete, redirecting to dashboard.");
         setTimeout(() => {
           navigate("/dashboard", { replace: true });
         }, 500);
       } catch (error) {
         // Print the error and any extra details if available
         console.error("OIDC callback error:", error);
-        if (error instanceof Error && error.message.includes("Code verifier not found")) {
+        if (
+          error instanceof Error &&
+          (error.message.includes("Code verifier not found") ||
+            error.message.includes("Login could not be completed"))
+        ) {
           auth.setError(
             "Unable to complete login: The code verifier required for secure login was not found.\n" +
-              "This usually happens if you opened the magic link in a new tab or device.\n" +
-              "For security, please use the same tab where you started the login process, or contact support if the problem persists.",
+              "This usually happens if you opened the magic link in a new tab or device, or your session expired.\n" +
+              "For security, please use the same tab where you started the login process, or click 'Restart Login' below.",
           );
         } else {
           auth.setError((error as Error).message || "Failed to complete OIDC login");
         }
-        setTimeout(() => {
-          navigate("/login", { replace: true });
-        }, 4000);
+        // Do not auto-redirect to login; let user use the button
       }
     };
 
@@ -80,6 +82,32 @@ export function OidcCallbackPage() {
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
       }}>
       <div style={{ textAlign: "center", color: "#fff", width: "100%", maxWidth: 480 }}>
+        {auth.error && (
+          <>
+            <div style={{ margin: "1rem 0", color: "#ffb3b3", fontWeight: 600 }}>{auth.error}</div>
+            <button
+              style={{
+                margin: "1rem 0",
+                padding: "0.75rem 1.5rem",
+                background: "#fff",
+                color: "#764ba2",
+                border: "none",
+                borderRadius: 6,
+                fontWeight: 700,
+                cursor: "pointer",
+                fontSize: 16,
+              }}
+              onClick={() => {
+                // Clear PKCE verifier and redirect to login
+                window.localStorage.removeItem("queid_sp_pkce_verifier");
+                auth.setError(null);
+                auth.setIsLoading(false);
+                navigate("/login", { replace: true });
+              }}>
+              Restart Login
+            </button>
+          </>
+        )}
         {auth.error ? (
           <div
             style={{

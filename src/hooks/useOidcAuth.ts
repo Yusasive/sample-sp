@@ -24,16 +24,28 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
     auth.setIsLoading(true);
     auth.setError(null);
     try {
+      // Single-tab enforcement: warn if a verifier already exists
+      const existingVerifier = window.localStorage.getItem("queid_sp_pkce_verifier");
+      if (existingVerifier) {
+        console.warn(
+          "A PKCE login is already in progress. Please complete it before starting a new one.",
+        );
+        auth.setError(
+          "A login is already in progress in this tab. Please complete it or clear your browser storage.",
+        );
+        auth.setIsLoading(false);
+        return;
+      }
       oidcServiceRef.current = new OidcService(config);
       const { verifier } = await generatePKCEPair();
       auth.setCodeVerifier(verifier);
-      // Best practice: always save PKCE verifier to localStorage for cross-tab/session reliability
+      // Always save PKCE verifier to localStorage for cross-tab/session reliability
       window.localStorage.setItem("queid_sp_pkce_verifier", verifier);
       auth.setAuthMethod("oidc");
       const authUrl = await oidcServiceRef.current.buildAuthorizationUrl(verifier);
       // Debug: log PKCE verifier before redirect
-      console.log(
-        "PKCE verifier after startLogin:",
+      console.debug(
+        "[PKCE] Verifier set in localStorage after startLogin:",
         window.localStorage.getItem("queid_sp_pkce_verifier"),
       );
       window.location.href = authUrl;
@@ -64,7 +76,14 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
           verifier = localVerifier !== null ? localVerifier : null;
         }
         if (!verifier) {
-          throw new AuthError("MISSING_VERIFIER", "Code verifier not found. Start login first.");
+          // Debug log for missing verifier
+          console.error(
+            "[PKCE] Code verifier not found in localStorage or context during callback.",
+          );
+          throw new AuthError(
+            "MISSING_VERIFIER",
+            "Login could not be completed. Please use the same tab where you started the login process, or click 'Restart Login' below.",
+          );
         }
 
         const tokens = await oidcServiceRef.current.exchangeCodeForTokens(
@@ -77,6 +96,7 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
         auth.setCodeVerifier(null);
         // Clean up PKCE verifier from localStorage after use
         window.localStorage.removeItem("queid_sp_pkce_verifier");
+        console.debug("[PKCE] Verifier removed from localStorage after successful token exchange.");
         return tokens;
       } catch (error) {
         const message = getErrorMessage(error);

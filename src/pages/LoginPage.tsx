@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { OidcConfig, SamlConfig } from "@/types/auth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
@@ -44,12 +44,34 @@ export function LoginPage() {
   const [oidcConfig] = useState(DEFAULT_OIDC_CONFIG);
   const [samlConfig] = useState(DEFAULT_SAML_CONFIG);
   const [error, setError] = useState("");
+  const [loginInProgress, setLoginInProgress] = useState(false);
+
+  // On mount, check if a PKCE login is already in progress in any tab
+  // and listen for changes across tabs
+  useEffect(() => {
+    const checkVerifier = () => {
+      const existingVerifier = window.localStorage.getItem("queid_sp_pkce_verifier");
+      setLoginInProgress(!!existingVerifier);
+    };
+    checkVerifier();
+    window.addEventListener("storage", checkVerifier);
+    return () => {
+      window.removeEventListener("storage", checkVerifier);
+    };
+  }, []);
 
   const oidcAuth = useOidcAuth(oidcConfig);
   const samlAuth = useSamlAuth(samlConfig);
 
   const handleOidcLogin = async () => {
     setError("");
+    // Block login if a PKCE login is already in progress in any tab
+    if (loginInProgress) {
+      setError(
+        "A login is already in progress in this browser. Please complete it or clear your browser storage before starting a new login.",
+      );
+      return;
+    }
     if (!oidcConfig.issuer || !oidcConfig.clientId) {
       setError("Please fill in Issuer URL and Client ID");
       return;
@@ -57,9 +79,7 @@ export function LoginPage() {
     try {
       await oidcAuth.startLogin();
       // Debug: Confirm PKCE verifier is set in storage
-      const pkceVerifier =
-        window.localStorage.getItem("pkce_verifier") ||
-        window.sessionStorage.getItem("pkce_verifier");
+      const pkceVerifier = window.localStorage.getItem("queid_sp_pkce_verifier");
       console.log("PKCE verifier after startLogin:", pkceVerifier);
     } catch (err) {
       setError((err as Error).message || "OIDC login failed");
@@ -118,7 +138,6 @@ export function LoginPage() {
             {error}
           </div>
         )}
-
         {auth.isLoading && (
           <div style={{ textAlign: "center", marginBottom: "1.5rem", color: "#64748b" }}>
             Processing...

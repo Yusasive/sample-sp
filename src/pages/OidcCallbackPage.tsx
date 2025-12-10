@@ -42,7 +42,11 @@ export function OidcCallbackPage() {
           navigate("/dashboard", { replace: true });
         }, 500);
       } catch (error) {
+        // Print the error and any extra details if available
         console.error("OIDC callback error:", error);
+        if (error && typeof error === "object" && "details" in error && error.details) {
+          console.error("OIDC token endpoint error details:", (error as any).details);
+        }
         auth.setError((error as Error).message || "Failed to complete OIDC login");
         setTimeout(() => {
           navigate("/login", { replace: true });

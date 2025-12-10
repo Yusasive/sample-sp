@@ -196,7 +196,10 @@ export class OidcService {
     }
   }
 
-  async revokeToken(token: string, tokenTypeHint?: "access_token" | "refresh_token"): Promise<void> {
+  async revokeToken(
+    token: string,
+    tokenTypeHint?: "access_token" | "refresh_token",
+  ): Promise<void> {
     try {
       const discovery = await this.getDiscovery();
       const issuerUrl = new URL(discovery.issuer);

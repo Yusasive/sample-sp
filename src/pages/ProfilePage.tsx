@@ -25,7 +25,7 @@ export function ProfilePage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "2rem", color: "#1e293b" }}>Your Profile</h1>
+      <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>Your Profile</h1>
 
       <div
         style={{
@@ -34,6 +34,7 @@ export function ProfilePage() {
           borderRadius: 12,
           padding: "2rem",
           boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          color: "#1e293b",
         }}>
         {auth.userInfo ? (
           <div style={{ display: "grid", gap: "1rem" }}>
@@ -79,7 +80,9 @@ export function ProfilePage() {
 
             <div
               style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "2px solid #e2e8f0" }}>
-              <h3 style={{ color: "#1e293b", marginBottom: "1rem" }}>Additional Information</h3>
+              <h3 style={{ color: "#1e293b", marginBottom: "1rem", fontWeight: 600 }}>
+                Additional Information
+              </h3>
               <div style={{ display: "grid", gap: "0.75rem" }}>
                 <div>
                   <span style={{ color: "#64748b", fontSize: "0.85rem" }}>
@@ -118,7 +121,7 @@ export function ProfilePage() {
             </details>
           </div>
         ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
+          <div style={{ textAlign: "center", padding: "2rem", color: "#334155" }}>
             <p>No user profile information available.</p>
             <p style={{ fontSize: "0.9rem" }}>Please ensure you are logged in.</p>
           </div>

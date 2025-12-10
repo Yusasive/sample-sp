@@ -24,6 +24,7 @@ function TokenCard({ title, token, type }: { title: string; token: string; type:
         borderRadius: 8,
         padding: "1.5rem",
         marginBottom: "1rem",
+        color: "#1e293b",
       }}>
       <div
         style={{
@@ -33,9 +34,9 @@ function TokenCard({ title, token, type }: { title: string; token: string; type:
           marginBottom: "1rem",
         }}>
         <div>
-          <h3 style={{ margin: "0 0 0.5rem 0", color: "#1e293b" }}>{title}</h3>
-          <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-            Type: {type} • Expires in: {formatTokenExpirationTime(expiresIn)}
+          <h3 style={{ margin: "0 0 0.5rem 0", color: "#1e293b", fontWeight: 600 }}>{title}</h3>
+          <p style={{ margin: 0, color: "#334155", fontSize: "0.85rem" }}>
+            Type: {type} Expires in: {formatTokenExpirationTime(expiresIn)}
           </p>
         </div>
         <button
@@ -63,7 +64,7 @@ function TokenCard({ title, token, type }: { title: string; token: string; type:
               padding: "1rem",
               marginBottom: "1rem",
             }}>
-            <p style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.85rem" }}>
+            <p style={{ margin: "0 0 0.5rem 0", color: "#334155", fontSize: "0.85rem" }}>
               Token Value:
             </p>
             <code
@@ -81,7 +82,7 @@ function TokenCard({ title, token, type }: { title: string; token: string; type:
           {decoded && (
             <div>
               <div style={{ marginBottom: "1rem" }}>
-                <p style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.85rem" }}>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#334155", fontSize: "0.85rem" }}>
                   Header:
                 </p>
                 <pre
@@ -100,7 +101,7 @@ function TokenCard({ title, token, type }: { title: string; token: string; type:
               </div>
 
               <div style={{ marginBottom: "1rem" }}>
-                <p style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.85rem" }}>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#334155", fontSize: "0.85rem" }}>
                   Payload:
                 </p>
                 <pre
@@ -132,7 +133,9 @@ export function TokensPage() {
   if (!auth.tokens) {
     return (
       <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
-        <h1 style={{ marginBottom: "2rem", color: "#1e293b" }}>Token Management</h1>
+        <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>
+          Token Management
+        </h1>
         <div
           style={{
             background: "#fee2e2",
@@ -150,7 +153,7 @@ export function TokensPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "2rem", color: "#1e293b" }}>Token Management</h1>
+      <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>Token Management</h1>
 
       <div style={{ marginBottom: "2rem" }}>
         <div
@@ -201,7 +204,7 @@ export function TokensPage() {
           padding: "1.5rem",
           marginBottom: "1rem",
         }}>
-        <h3 style={{ margin: "0 0 1rem 0", color: "#1e293b" }}>Token Actions</h3>
+        <h3 style={{ margin: "0 0 1rem 0", color: "#1e293b", fontWeight: 600 }}>Token Actions</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           {auth.tokens.refresh_token && auth.authMethod === "oidc" && (
             <button
@@ -214,13 +217,13 @@ export function TokensPage() {
               }}
               disabled={auth.isLoading}
               style={{
-                background: "#f59e0b",
-                color: "#fff",
+                background: "#fef3c7",
+                color: "#92400e",
                 border: "none",
                 borderRadius: 6,
                 padding: "0.75rem 1rem",
                 cursor: "pointer",
-                fontWeight: 500,
+                fontWeight: 600,
                 opacity: auth.isLoading ? 0.7 : 1,
               }}>
               {auth.isLoading ? "Refreshing..." : "Refresh Tokens"}
@@ -240,13 +243,13 @@ export function TokensPage() {
               }}
               disabled={auth.isLoading}
               style={{
-                background: "#ef4444",
-                color: "#fff",
+                background: "#fee2e2",
+                color: "#991b1b",
                 border: "none",
                 borderRadius: 6,
                 padding: "0.75rem 1rem",
                 cursor: "pointer",
-                fontWeight: 500,
+                fontWeight: 600,
                 opacity: auth.isLoading ? 0.7 : 1,
               }}>
               {auth.isLoading ? "Revoking..." : "Revoke Refresh Token"}
@@ -256,7 +259,7 @@ export function TokensPage() {
       </div>
 
       <details style={{ cursor: "pointer", marginTop: "1.5rem" }}>
-        <summary style={{ color: "#667eea", fontWeight: 500, marginBottom: "1rem" }}>
+        <summary style={{ color: "#4338ca", fontWeight: 600, marginBottom: "1rem" }}>
           View Raw Token Data (Dev)
         </summary>
         <pre

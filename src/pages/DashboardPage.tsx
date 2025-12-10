@@ -11,8 +11,6 @@ const mockOidcConfig: OidcConfig = {
   scopes: ["openid", "profile", "email"],
 };
 
-
-
 export function DashboardPage() {
   const auth = useAuthContext();
   const oidcAuth = useOidcAuth(mockOidcConfig);
@@ -28,7 +26,9 @@ export function DashboardPage() {
 
   return (
     <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "2rem", color: "#1e293b" }}>Welcome to Your Dashboard</h1>
+      <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>
+        Welcome to Your Dashboard
+      </h1>
 
       {auth.isLoading && (
         <div
@@ -73,8 +73,15 @@ export function DashboardPage() {
             borderRadius: 12,
             padding: "1.5rem",
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            color: "#1e293b",
           }}>
-          <h2 style={{ marginBottom: "1.5rem", color: "#1e293b", fontSize: "1.25rem" }}>
+          <h2
+            style={{
+              marginBottom: "1.5rem",
+              color: "#1e293b",
+              fontSize: "1.25rem",
+              fontWeight: 600,
+            }}>
             👤 User Profile
           </h2>
           {auth.userInfo ? (
@@ -138,7 +145,7 @@ export function DashboardPage() {
               )}
             </div>
           ) : (
-            <p style={{ color: "#64748b" }}>
+            <p style={{ color: "#334155" }}>
               No user information loaded. Click the button below to fetch.
             </p>
           )}
@@ -149,12 +156,13 @@ export function DashboardPage() {
               style={{
                 marginTop: "1rem",
                 padding: "0.5rem 1rem",
-                background: "#667eea",
-                color: "#fff",
+                background: "#e0e7ff",
+                color: "#1e293b",
                 border: "none",
                 borderRadius: 6,
                 cursor: "pointer",
                 opacity: auth.isLoading ? 0.7 : 1,
+                fontWeight: 600,
               }}>
               {auth.isLoading ? "Loading..." : "Fetch User Info"}
             </button>
@@ -169,8 +177,15 @@ export function DashboardPage() {
             borderRadius: 12,
             padding: "1.5rem",
             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            color: "#1e293b",
           }}>
-          <h2 style={{ marginBottom: "1.5rem", color: "#1e293b", fontSize: "1.25rem" }}>
+          <h2
+            style={{
+              marginBottom: "1.5rem",
+              color: "#1e293b",
+              fontSize: "1.25rem",
+              fontWeight: 600,
+            }}>
             🔐 Authentication Details
           </h2>
           <div style={{ display: "grid", gap: "1rem" }}>
@@ -201,7 +216,7 @@ export function DashboardPage() {
                     background: auth.isAuthenticated ? "#10b981" : "#ef4444",
                   }}
                 />
-                <span style={{ color: "#1e293b", fontWeight: 500 }}>
+                <span style={{ color: "#1e293b", fontWeight: 600 }}>
                   {auth.isAuthenticated ? "Authenticated" : "Not Authenticated"}
                 </span>
               </div>
@@ -233,12 +248,13 @@ export function DashboardPage() {
                 style={{
                   marginTop: "0.5rem",
                   padding: "0.5rem 1rem",
-                  background: "#f59e0b",
-                  color: "#fff",
+                  background: "#fef3c7",
+                  color: "#92400e",
                   border: "none",
                   borderRadius: 6,
                   cursor: "pointer",
                   opacity: auth.isLoading ? 0.7 : 1,
+                  fontWeight: 600,
                 }}>
                 {auth.isLoading ? "Refreshing..." : "Refresh Token"}
               </button>
@@ -256,8 +272,15 @@ export function DashboardPage() {
             borderRadius: 12,
             padding: "1.5rem",
             marginBottom: "2rem",
+            color: "#1e293b",
           }}>
-          <h2 style={{ marginBottom: "1.5rem", color: "#1e293b", fontSize: "1.25rem" }}>
+          <h2
+            style={{
+              marginBottom: "1.5rem",
+              color: "#1e293b",
+              fontSize: "1.25rem",
+              fontWeight: 600,
+            }}>
             ⏱️ Token Status
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -335,13 +358,15 @@ export function DashboardPage() {
           border: "1px solid #e2e8f0",
           borderRadius: 12,
           padding: "1.5rem",
+          color: "#1e293b",
         }}>
-        <h2 style={{ marginBottom: "1rem", color: "#1e293b", fontSize: "1.25rem" }}>
+        <h2
+          style={{ marginBottom: "1rem", color: "#1e293b", fontSize: "1.25rem", fontWeight: 600 }}>
           📋 Token Details
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "1rem" }}>
+        <p style={{ color: "#334155", fontSize: "0.9rem", marginBottom: "1rem" }}>
           For detailed token management and inspection, visit the{" "}
-          <a href="/tokens" style={{ color: "#667eea", textDecoration: "none", fontWeight: 500 }}>
+          <a href="/tokens" style={{ color: "#4338ca", textDecoration: "none", fontWeight: 600 }}>
             Tokens page
           </a>
         </p>

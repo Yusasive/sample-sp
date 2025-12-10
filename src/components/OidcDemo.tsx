@@ -3,10 +3,16 @@ import type { OidcConfig } from "@/types/auth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 
+const getApiIssuer = (issuer: string) =>
+  issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
 const defaultConfig: OidcConfig = {
-  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  issuer: getApiIssuer(import.meta.env.VITE_OIDC_ISSUER_URL || ""),
   clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
-  redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || "",
+  redirectUri:
+    import.meta.env.VITE_OIDC_REDIRECT_URI &&
+    import.meta.env.VITE_OIDC_REDIRECT_URI.endsWith("/callback")
+      ? import.meta.env.VITE_OIDC_REDIRECT_URI
+      : `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };
 

@@ -4,11 +4,16 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 import { useSamlAuth } from "@/hooks/useSamlAuth";
 
+const getApiIssuer = (issuer: string) =>
+  issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
 const DEFAULT_OIDC_CONFIG: OidcConfig = {
-  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  issuer: getApiIssuer(import.meta.env.VITE_OIDC_ISSUER_URL || ""),
   clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
-  clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET || undefined,
-  redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI || `${window.location.origin}/callback`,
+  redirectUri:
+    import.meta.env.VITE_OIDC_REDIRECT_URI &&
+    import.meta.env.VITE_OIDC_REDIRECT_URI.endsWith("/callback")
+      ? import.meta.env.VITE_OIDC_REDIRECT_URI
+      : `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };
 
@@ -26,9 +31,13 @@ const DEFAULT_SAML_CONFIG: SamlConfig = {
 export function LoginPage() {
   // Debug log to verify .env values
   console.log("OIDC ENV CONFIG:", {
-    issuer: import.meta.env.VITE_OIDC_ISSUER_URL,
+    issuer: getApiIssuer(import.meta.env.VITE_OIDC_ISSUER_URL || ""),
     clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
-    redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+    redirectUri:
+      import.meta.env.VITE_OIDC_REDIRECT_URI &&
+      import.meta.env.VITE_OIDC_REDIRECT_URI.endsWith("/callback")
+        ? import.meta.env.VITE_OIDC_REDIRECT_URI
+        : `${window.location.origin}/callback`,
   });
   const auth = useAuthContext();
   const [authMethod, setAuthMethod] = useState<"oidc" | "saml" | null>(null);
@@ -47,6 +56,11 @@ export function LoginPage() {
     }
     try {
       await oidcAuth.startLogin();
+      // Debug: Confirm PKCE verifier is set in storage
+      const pkceVerifier =
+        window.localStorage.getItem("pkce_verifier") ||
+        window.sessionStorage.getItem("pkce_verifier");
+      console.log("PKCE verifier after startLogin:", pkceVerifier);
     } catch (err) {
       setError((err as Error).message || "OIDC login failed");
     }

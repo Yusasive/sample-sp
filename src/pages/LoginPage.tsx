@@ -28,7 +28,6 @@ export function LoginPage() {
   console.log("OIDC ENV CONFIG:", {
     issuer: import.meta.env.VITE_OIDC_ISSUER_URL,
     clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
-    clientSecret: import.meta.env.VITE_OIDC_CLIENT_SECRET,
     redirectUri: import.meta.env.VITE_OIDC_REDIRECT_URI,
   });
   const auth = useAuthContext();

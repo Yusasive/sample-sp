@@ -17,6 +17,7 @@ export function OidcCallbackPage() {
   const auth = useAuthContext();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
+  console.log("OIDC Config:", oidcConfig);
   const oidcAuth = useOidcAuth(oidcConfig);
 
   useEffect(() => {

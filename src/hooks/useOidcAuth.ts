@@ -27,8 +27,15 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
       oidcServiceRef.current = new OidcService(config);
       const { verifier } = await generatePKCEPair();
       auth.setCodeVerifier(verifier);
+      // Best practice: always save PKCE verifier to localStorage for cross-tab/session reliability
+      window.localStorage.setItem("queid_sp_pkce_verifier", verifier);
       auth.setAuthMethod("oidc");
       const authUrl = await oidcServiceRef.current.buildAuthorizationUrl(verifier);
+      // Debug: log PKCE verifier before redirect
+      console.log(
+        "PKCE verifier after startLogin:",
+        window.localStorage.getItem("queid_sp_pkce_verifier"),
+      );
       window.location.href = authUrl;
     } catch (error) {
       const message = getErrorMessage(error);
@@ -49,7 +56,11 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
       auth.setError(null);
 
       try {
-        const verifier = auth.codeVerifier || getFromStorage<string>(STORAGE_KEYS.PKCE_VERIFIER);
+        // Best practice: try to get PKCE verifier from localStorage if not in context/storage
+        let verifier = auth.codeVerifier || getFromStorage<string>(STORAGE_KEYS.PKCE_VERIFIER);
+        if (!verifier) {
+          verifier = window.localStorage.getItem("queid_sp_pkce_verifier") || undefined;
+        }
         if (!verifier) {
           throw new AuthError("MISSING_VERIFIER", "Code verifier not found. Start login first.");
         }
@@ -62,6 +73,8 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
 
         auth.setTokens(tokens);
         auth.setCodeVerifier(null);
+        // Clean up PKCE verifier from localStorage after use
+        window.localStorage.removeItem("queid_sp_pkce_verifier");
         return tokens;
       } catch (error) {
         const message = getErrorMessage(error);

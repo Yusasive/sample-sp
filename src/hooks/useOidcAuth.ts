@@ -40,8 +40,9 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
 
   const exchangeCode = useCallback(
     async (code: string): Promise<Tokens> => {
+      // Always initialize OidcService if not set (fixes callback reload issue)
       if (!oidcServiceRef.current) {
-        throw new AuthError("NOT_CONFIGURED", "OIDC not configured");
+        oidcServiceRef.current = new OidcService(config);
       }
 
       auth.setIsLoading(true);
@@ -70,7 +71,7 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
         auth.setIsLoading(false);
       }
     },
-    [auth, config.clientSecret],
+    [auth, config],
   );
 
   const fetchUserInfo = useCallback(async (): Promise<UserInfo> => {

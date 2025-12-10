@@ -32,11 +32,7 @@ export function OidcDemo() {
   // Store errorDetails as a string for safe rendering
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (code) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, [code]);
+  // Only clear code from URL after token exchange, not on mount
 
   // Auto-dismiss error after 5 seconds
   useEffect(() => {
@@ -50,12 +46,15 @@ export function OidcDemo() {
   }, [error]);
 
   useEffect(() => {
+    // Only handle code exchange if code is present and not on initial mount
     if (code) {
       (async () => {
         try {
           auth.setAuthMethod("oidc");
           await oidcAuth.exchangeCode(code);
           setCode("");
+          // Remove code from URL after successful exchange
+          window.history.replaceState({}, "", window.location.pathname);
         } catch (error) {
           setError(
             "Token exchange failed: " + (error instanceof Error ? error.message : "Unknown error"),
@@ -170,6 +169,7 @@ export function OidcDemo() {
             setError("");
             setLocalLoading(true);
             try {
+              // Always redirect to QUE-ID login page
               await oidcAuth.startLogin();
             } finally {
               setLocalLoading(false);

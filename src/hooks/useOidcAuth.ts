@@ -59,7 +59,9 @@ export function useOidcAuth(config: OidcConfig): UseOidcAuthReturn {
         // Best practice: try to get PKCE verifier from localStorage if not in context/storage
         let verifier = auth.codeVerifier || getFromStorage<string>(STORAGE_KEYS.PKCE_VERIFIER);
         if (!verifier) {
-          verifier = window.localStorage.getItem("queid_sp_pkce_verifier") || undefined;
+          // Always assign string or null, never undefined
+          const localVerifier = window.localStorage.getItem("queid_sp_pkce_verifier");
+          verifier = localVerifier !== null ? localVerifier : null;
         }
         if (!verifier) {
           throw new AuthError("MISSING_VERIFIER", "Code verifier not found. Start login first.");

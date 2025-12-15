@@ -4,17 +4,21 @@ import { useOidcAuth } from "@/hooks/useOidcAuth";
 import { useTokenManagement } from "@/hooks/useTokenManagement";
 import type { OidcConfig } from "@/types/auth";
 
-const mockOidcConfig: OidcConfig = {
-  issuer: "",
-  clientId: "",
-  redirectUri: `${window.location.origin}/callback`,
+const oidcConfig: OidcConfig = {
+  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+  clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
+  redirectUri:
+    import.meta.env.VITE_OIDC_REDIRECT_URI &&
+    import.meta.env.VITE_OIDC_REDIRECT_URI.endsWith("/callback")
+      ? import.meta.env.VITE_OIDC_REDIRECT_URI
+      : `${window.location.origin}/callback`,
   scopes: ["openid", "profile", "email"],
 };
 
 export function DashboardPage() {
   const auth = useAuthContext();
-  const oidcAuth = useOidcAuth(mockOidcConfig);
-  const tokenStatus = useTokenManagement(mockOidcConfig);
+  const oidcAuth = useOidcAuth(oidcConfig);
+  const tokenStatus = useTokenManagement(oidcConfig);
 
   useEffect(() => {
     if (auth.tokens?.access_token && !auth.userInfo) {
@@ -26,9 +30,7 @@ export function DashboardPage() {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">
-        Welcome to Your Dashboard
-      </h1>
+      <h1 className="text-3xl font-bold text-slate-900 mb-8">Welcome to Your Dashboard</h1>
 
       {auth.isLoading && (
         <div className="bg-blue-50 text-blue-900 border border-blue-300 rounded-lg p-4 mb-6">
@@ -44,56 +46,36 @@ export function DashboardPage() {
 
       <div className="grid md:grid-cols-2 gap-8 mb-8">
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">
-            👤 User Profile
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">👤 User Profile</h2>
           {auth.userInfo ? (
             <div className="space-y-4">
               {auth.userInfo.email && (
                 <div>
-                  <label className="block text-slate-500 text-sm mb-1">
-                    Email
-                  </label>
-                  <p className="text-slate-900 font-medium">
-                    {auth.userInfo.email}
-                  </p>
+                  <label className="block text-slate-500 text-sm mb-1">Email</label>
+                  <p className="text-slate-900 font-medium">{auth.userInfo.email}</p>
                 </div>
               )}
               {auth.userInfo.given_name && (
                 <div>
-                  <label className="block text-slate-500 text-sm mb-1">
-                    First Name
-                  </label>
-                  <p className="text-slate-900 font-medium">
-                    {auth.userInfo.given_name}
-                  </p>
+                  <label className="block text-slate-500 text-sm mb-1">First Name</label>
+                  <p className="text-slate-900 font-medium">{auth.userInfo.given_name}</p>
                 </div>
               )}
               {auth.userInfo.family_name && (
                 <div>
-                  <label className="block text-slate-500 text-sm mb-1">
-                    Last Name
-                  </label>
-                  <p className="text-slate-900 font-medium">
-                    {auth.userInfo.family_name}
-                  </p>
+                  <label className="block text-slate-500 text-sm mb-1">Last Name</label>
+                  <p className="text-slate-900 font-medium">{auth.userInfo.family_name}</p>
                 </div>
               )}
               {auth.userInfo.preferred_username && (
                 <div>
-                  <label className="block text-slate-500 text-sm mb-1">
-                    Username
-                  </label>
-                  <p className="text-slate-900 font-medium">
-                    {auth.userInfo.preferred_username}
-                  </p>
+                  <label className="block text-slate-500 text-sm mb-1">Username</label>
+                  <p className="text-slate-900 font-medium">{auth.userInfo.preferred_username}</p>
                 </div>
               )}
               {auth.userInfo.sub && (
                 <div>
-                  <label className="block text-slate-500 text-sm mb-1">
-                    User ID
-                  </label>
+                  <label className="block text-slate-500 text-sm mb-1">User ID</label>
                   <p className="text-slate-900 font-medium text-sm break-all">
                     {auth.userInfo.sub}
                   </p>
@@ -116,22 +98,16 @@ export function DashboardPage() {
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">
-             Authentication Details
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">Authentication Details</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-slate-500 text-sm mb-1">
-                Authentication Method
-              </label>
+              <label className="block text-slate-500 text-sm mb-1">Authentication Method</label>
               <p className="text-slate-900 font-medium">
                 {auth.authMethod?.toUpperCase() || "Unknown"}
               </p>
             </div>
             <div>
-              <label className="block text-slate-500 text-sm mb-1">
-                Status
-              </label>
+              <label className="block text-slate-500 text-sm mb-1">Status</label>
               <div className="flex items-center gap-2 mt-1">
                 <div
                   className={`w-3 h-3 rounded-full ${
@@ -145,9 +121,7 @@ export function DashboardPage() {
             </div>
             {auth.tokens?.access_token && (
               <div>
-                <label className="block text-slate-500 text-sm mb-1">
-                  Access Token Expires In
-                </label>
+                <label className="block text-slate-500 text-sm mb-1">Access Token Expires In</label>
                 <p className="text-slate-900 font-medium">
                   {auth.tokens?.expires_in
                     ? `${Math.round(auth.tokens.expires_in / 60)} minutes`
@@ -177,14 +151,10 @@ export function DashboardPage() {
 
       {auth.tokens && (
         <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">
-             Token Status
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">Token Status</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="bg-green-50 border border-green-300 rounded-lg p-4">
-              <label className="block text-green-700 text-sm mb-1">
-                Access Token
-              </label>
+              <label className="block text-green-700 text-sm mb-1">Access Token</label>
               <p className="text-green-900 font-semibold text-lg">
                 {tokenStatus.isAccessExpired ? "🔴 Expired" : "🟢 Valid"}
               </p>
@@ -195,9 +165,7 @@ export function DashboardPage() {
 
             {auth.tokens.refresh_token && (
               <div className="bg-blue-50 border border-blue-300 rounded-lg p-4">
-                <label className="block text-blue-700 text-sm mb-1">
-                  Refresh Token
-                </label>
+                <label className="block text-blue-700 text-sm mb-1">Refresh Token</label>
                 <p className="text-blue-900 font-semibold text-lg">
                   {tokenStatus.isRefreshExpired ? "🔴 Expired" : "🟢 Valid"}
                 </p>
@@ -210,16 +178,14 @@ export function DashboardPage() {
 
           {tokenStatus.needsRefresh && auth.authMethod === "oidc" && (
             <div className="bg-amber-100 text-amber-900 border border-amber-300 rounded-lg p-4 mt-4">
-               Token will be automatically refreshed shortly.
+              Token will be automatically refreshed shortly.
             </div>
           )}
         </div>
       )}
 
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-slate-900 mb-4">
-          📋 Token Details
-        </h2>
+        <h2 className="text-xl font-semibold text-slate-900 mb-4">📋 Token Details</h2>
         <p className="text-slate-700 text-sm mb-4">
           For detailed token management and inspection, visit the{" "}
           <a href="/tokens" className="text-indigo-600 font-semibold hover:text-indigo-700">

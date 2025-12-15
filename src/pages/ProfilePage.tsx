@@ -15,11 +15,15 @@ function InfoCard({ label, value }: { label: string; value: string | undefined }
 
 export function ProfilePage() {
   const auth = useAuthContext();
-  // Use the same OIDC config logic as Dashboard (or adjust as needed)
+  // Use real OIDC config from environment
   const oidcConfig: OidcConfig = {
-    issuer: "",
-    clientId: "",
-    redirectUri: `${window.location.origin}/callback`,
+    issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
+    clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
+    redirectUri:
+      import.meta.env.VITE_OIDC_REDIRECT_URI &&
+      import.meta.env.VITE_OIDC_REDIRECT_URI.endsWith("/callback")
+        ? import.meta.env.VITE_OIDC_REDIRECT_URI
+        : `${window.location.origin}/callback`,
     scopes: ["openid", "profile", "email"],
   };
   const oidcAuth = useOidcAuth(oidcConfig);

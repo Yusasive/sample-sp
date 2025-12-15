@@ -6,13 +6,17 @@ import { AuthContext, type AuthContextType, type AuthState } from "./AuthContext
 
 export { AuthContext, type AuthContextType, type AuthState };
 
+const AUTH_METHOD_KEY = "queid_sp_auth_method";
 const initialState: AuthState = {
   isAuthenticated: false,
   tokens: null,
   userInfo: null,
   error: null,
   isLoading: false,
-  authMethod: null,
+  authMethod:
+    typeof window !== "undefined"
+      ? (window.localStorage.getItem(AUTH_METHOD_KEY) as "oidc" | "saml" | null)
+      : null,
   codeVerifier: null,
 };
 
@@ -65,6 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ...prev,
       authMethod: method,
     }));
+    if (typeof window !== "undefined") {
+      if (method) {
+        window.localStorage.setItem(AUTH_METHOD_KEY, method);
+      } else {
+        window.localStorage.removeItem(AUTH_METHOD_KEY);
+      }
+    }
   }, []);
 
   const setCodeVerifier = useCallback((verifier: string | null) => {
@@ -87,6 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     removeFromStorage(STORAGE_KEYS.TOKENS);
     removeFromStorage(STORAGE_KEYS.PKCE_VERIFIER);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(AUTH_METHOD_KEY);
+    }
   }, []);
 
   const reset = useCallback(() => {

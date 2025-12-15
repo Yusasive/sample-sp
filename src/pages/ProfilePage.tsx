@@ -1,21 +1,36 @@
+import { useEffect } from "react";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import { useOidcAuth } from "@/hooks/useOidcAuth";
+import type { OidcConfig } from "@/types/auth";
 
 function InfoCard({ label, value }: { label: string; value: string | undefined }) {
   if (!value) return null;
   return (
     <div className="pb-4 border-b border-slate-200">
-      <label className="block text-slate-500 text-sm mb-1">
-        {label}
-      </label>
-      <p className="m-0 text-slate-900 font-medium break-word">
-        {value}
-      </p>
+      <label className="block text-slate-500 text-sm mb-1">{label}</label>
+      <p className="m-0 text-slate-900 font-medium break-word">{value}</p>
     </div>
   );
 }
 
 export function ProfilePage() {
   const auth = useAuthContext();
+  // Use the same OIDC config logic as Dashboard (or adjust as needed)
+  const oidcConfig: OidcConfig = {
+    issuer: "",
+    clientId: "",
+    redirectUri: `${window.location.origin}/callback`,
+    scopes: ["openid", "profile", "email"],
+  };
+  const oidcAuth = useOidcAuth(oidcConfig);
+
+  useEffect(() => {
+    if (auth.tokens?.access_token && !auth.userInfo) {
+      if (auth.authMethod === "oidc") {
+        oidcAuth.fetchUserInfo().catch(console.error);
+      }
+    }
+  }, [auth.tokens, auth.userInfo, auth.authMethod, oidcAuth]);
 
   return (
     <div className="p-8 max-w-3xl mx-auto">
@@ -32,9 +47,7 @@ export function ProfilePage() {
             <InfoCard label="User ID (Sub)" value={auth.userInfo.sub} />
             {auth.userInfo.email_verified !== undefined && (
               <div className="pb-4 border-b border-slate-200">
-                <label className="block text-slate-500 text-sm mb-2">
-                  Email Verified
-                </label>
+                <label className="block text-slate-500 text-sm mb-2">Email Verified</label>
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold ${
@@ -50,14 +63,10 @@ export function ProfilePage() {
             )}
 
             <div className="mt-6 pt-6 border-t-2 border-slate-200">
-              <h3 className="text-slate-900 mb-4 font-semibold">
-                Additional Information
-              </h3>
+              <h3 className="text-slate-900 mb-4 font-semibold">Additional Information</h3>
               <div className="space-y-3">
                 <div>
-                  <span className="text-slate-500 text-sm">
-                    Authentication Method:
-                  </span>
+                  <span className="text-slate-500 text-sm">Authentication Method:</span>
                   <p className="m-0 text-slate-900 font-medium">
                     {auth.authMethod?.toUpperCase() || "Unknown"}
                   </p>

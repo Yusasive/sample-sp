@@ -39,6 +39,23 @@ export function LoginPage() {
         ? import.meta.env.VITE_OIDC_REDIRECT_URI
         : `${window.location.origin}/callback`,
   });
+  // Debug log for SAML config
+  console.log("SAML ENV CONFIG:", {
+    spName: import.meta.env.VITE_SAML_SP_NAME,
+    entityId: import.meta.env.VITE_SAML_ENTITY_ID,
+    acsUrl: import.meta.env.VITE_SAML_ACS_URL,
+    acsBinding: import.meta.env.VITE_SAML_ACS_BINDING,
+    nameIdFormat: import.meta.env.VITE_SAML_NAMEID_FORMAT,
+    sloUrl: import.meta.env.VITE_SAML_SLO_URL,
+    sloBinding: import.meta.env.VITE_SAML_SLO_BINDING,
+    certificate: import.meta.env.VITE_SAML_CERTIFICATE,
+    idpEntityId: import.meta.env.VITE_SAML_IDP_ENTITY_ID,
+    idpSsoUrl: import.meta.env.VITE_SAML_IDP_SSO_URL,
+    idpSsoBinding: import.meta.env.VITE_SAML_IDP_SSO_BINDING,
+    idpSloUrl: import.meta.env.VITE_SAML_IDP_SLO_URL,
+    idpSloBinding: import.meta.env.VITE_SAML_IDP_SLO_BINDING,
+    idpSigningCertificate: import.meta.env.VITE_SAML_IDP_SIGNING_CERTIFICATE,
+  });
   const auth = useAuthContext();
   const [authMethod, setAuthMethod] = useState<"oidc" | "saml" | null>(null);
   const [oidcConfig] = useState(DEFAULT_OIDC_CONFIG);
@@ -102,35 +119,27 @@ export function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-sm w-full">
-        <h1 className="text-center text-2xl font-bold text-slate-900 mb-2">
-          Que-ID Login
-        </h1>
-        <p className="text-center text-slate-500 mb-8">
-          Select your authentication method
-        </p>
+        <h1 className="text-center text-2xl font-bold text-slate-900 mb-2">Que-ID Login</h1>
+        <p className="text-center text-slate-500 mb-8">Select your authentication method</p>
 
         {error && (
           <div className="bg-red-50 text-red-900 border border-red-300 rounded-lg p-4 mb-6">
             {error}
           </div>
         )}
-        {auth.isLoading && (
-          <div className="text-center text-slate-500 mb-6">
-            Processing...
-          </div>
-        )}
+        {auth.isLoading && <div className="text-center text-slate-500 mb-6">Processing...</div>}
 
         {!authMethod ? (
           <div className="space-y-4">
             <button
               onClick={() => setAuthMethod("oidc")}
               className="w-full p-4 border-2 border-slate-200 rounded-lg bg-slate-50 text-slate-900 font-medium transition-all hover:border-indigo-500 hover:bg-indigo-50">
-               Login with OIDC
+              Login with OIDC
             </button>
             <button
               onClick={() => setAuthMethod("saml")}
               className="w-full p-4 border-2 border-slate-200 rounded-lg bg-slate-50 text-slate-900 font-medium transition-all hover:border-purple-600 hover:bg-purple-50">
-               Login with SAML
+              Login with SAML
             </button>
           </div>
         ) : authMethod === "oidc" ? (

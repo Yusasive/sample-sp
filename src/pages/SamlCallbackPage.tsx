@@ -45,19 +45,10 @@ export function SamlCallbackPage() {
   }, [samlResponse, navigate, auth, samlAuth]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      }}>
-      <div style={{ textAlign: "center", color: "#fff" }}>
-        <h2>Completing SAML Login...</h2>
-        <div style={{ margin: "2rem auto", width: 48, height: 48 }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center p-4">
+      <div className="text-center text-white">
+        <h2 className="text-2xl font-bold mb-8">Completing SAML Login...</h2>
+        <div className="mx-auto w-12 h-12 mb-6">
           <svg
             width="48"
             height="48"
@@ -81,7 +72,7 @@ export function SamlCallbackPage() {
             </path>
           </svg>
         </div>
-        <p>
+        <p className="text-lg">
           Processing SAML response...
           <br />
           Please wait.

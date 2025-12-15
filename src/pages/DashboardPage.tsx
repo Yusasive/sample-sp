@@ -25,127 +25,83 @@ export function DashboardPage() {
   }, [auth.tokens, auth.userInfo, auth.authMethod, oidcAuth]);
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 1200, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>
+    <div className="p-8 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold text-slate-900 mb-8">
         Welcome to Your Dashboard
       </h1>
 
       {auth.isLoading && (
-        <div
-          style={{
-            background: "#dbeafe",
-            color: "#1e40af",
-            border: "1px solid #93c5fd",
-            borderRadius: 8,
-            padding: "1rem",
-            marginBottom: "1.5rem",
-          }}>
+        <div className="bg-blue-50 text-blue-900 border border-blue-300 rounded-lg p-4 mb-6">
           Loading user information...
         </div>
       )}
 
       {auth.error && (
-        <div
-          style={{
-            background: "#fee2e2",
-            color: "#991b1b",
-            border: "1px solid #fca5a5",
-            borderRadius: 8,
-            padding: "1rem",
-            marginBottom: "1.5rem",
-          }}>
+        <div className="bg-red-50 text-red-900 border border-red-300 rounded-lg p-4 mb-6">
           Error: {auth.error}
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "2rem",
-          marginBottom: "2rem",
-        }}>
-        {/* User Profile Card */}
-        <div
-          style={{
-            background: "#fff",
-            border: "1px solid #e2e8f0",
-            borderRadius: 12,
-            padding: "1.5rem",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            color: "#1e293b",
-          }}>
-          <h2
-            style={{
-              marginBottom: "1.5rem",
-              color: "#1e293b",
-              fontSize: "1.25rem",
-              fontWeight: 600,
-            }}>
+      <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">
             👤 User Profile
           </h2>
           {auth.userInfo ? (
-            <div style={{ display: "grid", gap: "1rem" }}>
+            <div className="space-y-4">
               {auth.userInfo.email && (
                 <div>
-                  <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                  <label className="block text-slate-500 text-sm mb-1">
                     Email
                   </label>
-                  <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+                  <p className="text-slate-900 font-medium">
                     {auth.userInfo.email}
                   </p>
                 </div>
               )}
               {auth.userInfo.given_name && (
                 <div>
-                  <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                  <label className="block text-slate-500 text-sm mb-1">
                     First Name
                   </label>
-                  <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+                  <p className="text-slate-900 font-medium">
                     {auth.userInfo.given_name}
                   </p>
                 </div>
               )}
               {auth.userInfo.family_name && (
                 <div>
-                  <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                  <label className="block text-slate-500 text-sm mb-1">
                     Last Name
                   </label>
-                  <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+                  <p className="text-slate-900 font-medium">
                     {auth.userInfo.family_name}
                   </p>
                 </div>
               )}
               {auth.userInfo.preferred_username && (
                 <div>
-                  <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                  <label className="block text-slate-500 text-sm mb-1">
                     Username
                   </label>
-                  <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+                  <p className="text-slate-900 font-medium">
                     {auth.userInfo.preferred_username}
                   </p>
                 </div>
               )}
               {auth.userInfo.sub && (
                 <div>
-                  <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                  <label className="block text-slate-500 text-sm mb-1">
                     User ID
                   </label>
-                  <p
-                    style={{
-                      margin: "0.25rem 0 0 0",
-                      color: "#1e293b",
-                      fontWeight: 500,
-                      fontSize: "0.85rem",
-                      wordBreak: "break-all",
-                    }}>
+                  <p className="text-slate-900 font-medium text-sm break-all">
                     {auth.userInfo.sub}
                   </p>
                 </div>
               )}
             </div>
           ) : (
-            <p style={{ color: "#334155" }}>
+            <p className="text-slate-600">
               No user information loaded. Click the button below to fetch.
             </p>
           )}
@@ -153,80 +109,46 @@ export function DashboardPage() {
             <button
               onClick={() => oidcAuth.fetchUserInfo()}
               disabled={auth.isLoading}
-              style={{
-                marginTop: "1rem",
-                padding: "0.5rem 1rem",
-                background: "#e0e7ff",
-                color: "#1e293b",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer",
-                opacity: auth.isLoading ? 0.7 : 1,
-                fontWeight: 600,
-              }}>
+              className="mt-4 px-4 py-2 bg-indigo-100 text-slate-900 font-semibold rounded-md hover:bg-indigo-200 disabled:opacity-70">
               {auth.isLoading ? "Loading..." : "Fetch User Info"}
             </button>
           )}
         </div>
 
-        {/* Authentication Details Card */}
-        <div
-          style={{
-            background: "#fff",
-            border: "1px solid #e2e8f0",
-            borderRadius: 12,
-            padding: "1.5rem",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            color: "#1e293b",
-          }}>
-          <h2
-            style={{
-              marginBottom: "1.5rem",
-              color: "#1e293b",
-              fontSize: "1.25rem",
-              fontWeight: 600,
-            }}>
-            🔐 Authentication Details
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">
+             Authentication Details
           </h2>
-          <div style={{ display: "grid", gap: "1rem" }}>
+          <div className="space-y-4">
             <div>
-              <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+              <label className="block text-slate-500 text-sm mb-1">
                 Authentication Method
               </label>
-              <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+              <p className="text-slate-900 font-medium">
                 {auth.authMethod?.toUpperCase() || "Unknown"}
               </p>
             </div>
             <div>
-              <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+              <label className="block text-slate-500 text-sm mb-1">
                 Status
               </label>
-              <div
-                style={{
-                  marginTop: "0.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}>
+              <div className="flex items-center gap-2 mt-1">
                 <div
-                  style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    background: auth.isAuthenticated ? "#10b981" : "#ef4444",
-                  }}
+                  className={`w-3 h-3 rounded-full ${
+                    auth.isAuthenticated ? "bg-green-500" : "bg-red-500"
+                  }`}
                 />
-                <span style={{ color: "#1e293b", fontWeight: 600 }}>
+                <span className="text-slate-900 font-semibold">
                   {auth.isAuthenticated ? "Authenticated" : "Not Authenticated"}
                 </span>
               </div>
             </div>
             {auth.tokens?.access_token && (
               <div>
-                <label style={{ display: "block", color: "#64748b", fontSize: "0.85rem" }}>
+                <label className="block text-slate-500 text-sm mb-1">
                   Access Token Expires In
                 </label>
-                <p style={{ margin: "0.25rem 0 0 0", color: "#1e293b", fontWeight: 500 }}>
+                <p className="text-slate-900 font-medium">
                   {auth.tokens?.expires_in
                     ? `${Math.round(auth.tokens.expires_in / 60)} minutes`
                     : "Unknown"}
@@ -245,17 +167,7 @@ export function DashboardPage() {
                   }
                 }}
                 disabled={auth.isLoading}
-                style={{
-                  marginTop: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "#fef3c7",
-                  color: "#92400e",
-                  border: "none",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  opacity: auth.isLoading ? 0.7 : 1,
-                  fontWeight: 600,
-                }}>
+                className="mt-2 px-4 py-2 bg-amber-100 text-amber-900 font-semibold rounded-md hover:bg-amber-200 disabled:opacity-70">
                 {auth.isLoading ? "Refreshing..." : "Refresh Token"}
               </button>
             )}
@@ -263,72 +175,33 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Token Status & Management */}
       {auth.tokens && (
-        <div
-          style={{
-            background: "#fff",
-            border: "1px solid #e2e8f0",
-            borderRadius: 12,
-            padding: "1.5rem",
-            marginBottom: "2rem",
-            color: "#1e293b",
-          }}>
-          <h2
-            style={{
-              marginBottom: "1.5rem",
-              color: "#1e293b",
-              fontSize: "1.25rem",
-              fontWeight: 600,
-            }}>
-            ⏱️ Token Status
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-8">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">
+             Token Status
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <div
-              style={{
-                background: "#f0fdf4",
-                border: "1px solid #bbf7d0",
-                borderRadius: 8,
-                padding: "1rem",
-              }}>
-              <label style={{ display: "block", color: "#16a34a", fontSize: "0.85rem" }}>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-green-50 border border-green-300 rounded-lg p-4">
+              <label className="block text-green-700 text-sm mb-1">
                 Access Token
               </label>
-              <p
-                style={{
-                  margin: "0.5rem 0 0 0",
-                  color: "#15803d",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}>
+              <p className="text-green-900 font-semibold text-lg">
                 {tokenStatus.isAccessExpired ? "🔴 Expired" : "🟢 Valid"}
               </p>
-              <p style={{ margin: "0.25rem 0 0 0", color: "#16a34a", fontSize: "0.85rem" }}>
+              <p className="text-green-700 text-sm mt-1">
                 Expires: {tokenStatus.accessExpirationTime}
               </p>
             </div>
 
             {auth.tokens.refresh_token && (
-              <div
-                style={{
-                  background: "#f0f9ff",
-                  border: "1px solid #bae6fd",
-                  borderRadius: 8,
-                  padding: "1rem",
-                }}>
-                <label style={{ display: "block", color: "#0369a1", fontSize: "0.85rem" }}>
+              <div className="bg-blue-50 border border-blue-300 rounded-lg p-4">
+                <label className="block text-blue-700 text-sm mb-1">
                   Refresh Token
                 </label>
-                <p
-                  style={{
-                    margin: "0.5rem 0 0 0",
-                    color: "#075985",
-                    fontWeight: 600,
-                    fontSize: "1rem",
-                  }}>
+                <p className="text-blue-900 font-semibold text-lg">
                   {tokenStatus.isRefreshExpired ? "🔴 Expired" : "🟢 Valid"}
                 </p>
-                <p style={{ margin: "0.25rem 0 0 0", color: "#0369a1", fontSize: "0.85rem" }}>
+                <p className="text-blue-700 text-sm mt-1">
                   Expires: {tokenStatus.refreshExpirationTime}
                 </p>
               </div>
@@ -336,55 +209,28 @@ export function DashboardPage() {
           </div>
 
           {tokenStatus.needsRefresh && auth.authMethod === "oidc" && (
-            <div
-              style={{
-                background: "#fef3c7",
-                color: "#92400e",
-                border: "1px solid #fcd34d",
-                borderRadius: 8,
-                padding: "1rem",
-                marginTop: "1rem",
-              }}>
-              ⚠️ Token will be automatically refreshed shortly.
+            <div className="bg-amber-100 text-amber-900 border border-amber-300 rounded-lg p-4 mt-4">
+               Token will be automatically refreshed shortly.
             </div>
           )}
         </div>
       )}
 
-      {/* Token Details (Dev View) */}
-      <div
-        style={{
-          background: "#f8fafc",
-          border: "1px solid #e2e8f0",
-          borderRadius: 12,
-          padding: "1.5rem",
-          color: "#1e293b",
-        }}>
-        <h2
-          style={{ marginBottom: "1rem", color: "#1e293b", fontSize: "1.25rem", fontWeight: 600 }}>
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+        <h2 className="text-xl font-semibold text-slate-900 mb-4">
           📋 Token Details
         </h2>
-        <p style={{ color: "#334155", fontSize: "0.9rem", marginBottom: "1rem" }}>
+        <p className="text-slate-700 text-sm mb-4">
           For detailed token management and inspection, visit the{" "}
-          <a href="/tokens" style={{ color: "#4338ca", textDecoration: "none", fontWeight: 600 }}>
+          <a href="/tokens" className="text-indigo-600 font-semibold hover:text-indigo-700">
             Tokens page
           </a>
         </p>
-        <details style={{ cursor: "pointer" }}>
-          <summary style={{ color: "#667eea", fontWeight: 500 }}>
+        <details className="cursor-pointer">
+          <summary className="text-indigo-600 font-medium hover:text-indigo-700">
             View Full Token Data (Dev)
           </summary>
-          <pre
-            style={{
-              background: "#fff",
-              padding: "1rem",
-              borderRadius: 6,
-              border: "1px solid #e2e8f0",
-              overflow: "auto",
-              maxHeight: 300,
-              fontSize: "0.75rem",
-              marginTop: "1rem",
-            }}>
+          <pre className="bg-white p-4 rounded-lg border border-slate-200 overflow-auto max-h-80 text-xs mt-4">
             {JSON.stringify(auth.tokens, null, 2)}
           </pre>
         </details>

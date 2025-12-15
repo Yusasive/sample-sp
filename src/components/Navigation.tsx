@@ -30,58 +30,40 @@ export function Navigation() {
   }
 
   return (
-    <nav
-      style={{
-        background: "#1e293b",
-        color: "#fff",
-        padding: "1rem",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}>
-      <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+    <nav className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
+      <div className="flex gap-8 items-center">
         <Link
           to="/dashboard"
-          style={{ color: "#fff", textDecoration: "none", fontSize: "1.2rem", fontWeight: "bold" }}>
+          className="text-white no-underline text-xl font-bold hover:text-slate-200 transition-colors">
           Que-ID SP
         </Link>
-        <div style={{ display: "flex", gap: "1.5rem" }}>
+        <div className="flex gap-6">
           <Link
             to="/dashboard"
-            style={{ color: "#e2e8f0", textDecoration: "none", transition: "color 0.2s" }}>
+            className="text-slate-200 no-underline transition-colors hover:text-white">
             Dashboard
           </Link>
           <Link
             to="/profile"
-            style={{ color: "#e2e8f0", textDecoration: "none", transition: "color 0.2s" }}>
+            className="text-slate-200 no-underline transition-colors hover:text-white">
             Profile
           </Link>
           <Link
             to="/tokens"
-            style={{ color: "#e2e8f0", textDecoration: "none", transition: "color 0.2s" }}>
+            className="text-slate-200 no-underline transition-colors hover:text-white">
             Tokens
           </Link>
         </div>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <span style={{ fontSize: "0.9rem", color: "#cbd5e1" }}>
+      <div className="flex items-center gap-4">
+        <span className="text-sm text-slate-300">
           {auth.userInfo?.email || auth.userInfo?.sub || "User"}
         </span>
         <button
           onClick={handleLogout}
           disabled={isLoading}
-          style={{
-            background: "#ef4444",
-            color: "#fff",
-            border: "none",
-            borderRadius: 4,
-            padding: "0.5rem 1rem",
-            cursor: isLoading ? "not-allowed" : "pointer",
-            fontSize: "0.9rem",
-            opacity: isLoading ? 0.7 : 1,
-          }}>
+          className="bg-red-500 text-white border-none rounded px-4 py-2 cursor-pointer text-sm hover:bg-red-600 disabled:opacity-70 disabled:cursor-not-allowed transition-colors">
           {isLoading ? "Logging out..." : "Logout"}
         </button>
       </div>

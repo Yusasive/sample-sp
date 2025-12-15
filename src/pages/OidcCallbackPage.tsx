@@ -71,82 +71,23 @@ export function OidcCallbackPage() {
   }, [code, navigate, auth, oidcAuth]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      }}>
-      <div style={{ textAlign: "center", color: "#fff", width: "100%", maxWidth: 480 }}>
-        {auth.error && (
-          <>
-            <div style={{ margin: "1rem 0", color: "#ffb3b3", fontWeight: 600 }}>{auth.error}</div>
-            <button
-              style={{
-                margin: "1rem 0",
-                padding: "0.75rem 1.5rem",
-                background: "#fff",
-                color: "#764ba2",
-                border: "none",
-                borderRadius: 6,
-                fontWeight: 700,
-                cursor: "pointer",
-                fontSize: 16,
-              }}
-              onClick={() => {
-                // Clear PKCE verifier and redirect to login
-                window.localStorage.removeItem("queid_sp_pkce_verifier");
-                auth.setError(null);
-                auth.setIsLoading(false);
-                navigate("/login", { replace: true });
-              }}>
-              Restart Login
-            </button>
-          </>
-        )}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center p-4">
+      <div className="text-center text-white w-full max-w-xl">
         {auth.error ? (
-          <div
-            style={{
-              background: "#fff",
-              color: "#d32f2f",
-              border: "2px solid #d32f2f",
-              borderRadius: 8,
-              padding: "2rem 1rem 1.5rem 1rem",
-              marginBottom: 24,
-              boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-              fontWeight: 500,
-              fontSize: "1.1rem",
-              whiteSpace: "pre-line",
-            }}>
-            <span style={{ fontSize: 24, display: "block", marginBottom: 12 }}>❌</span>
+          <div className="bg-white text-red-600 border-2 border-red-600 rounded-lg p-8 mb-6 shadow-lg font-medium text-lg whitespace-pre-line">
+            <span className="text-4xl block mb-3">❌</span>
             {auth.error}
             <br />
             <button
-              style={{
-                marginTop: 24,
-                background: "#d32f2f",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                padding: "0.75rem 2rem",
-                fontSize: "1rem",
-                cursor: "pointer",
-                fontWeight: 600,
-                boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
-                transition: "background 0.2s",
-              }}
+              className="mt-6 bg-red-600 text-white border-none rounded px-8 py-3 text-base cursor-pointer font-semibold shadow-sm hover:bg-red-700 transition-colors"
               onClick={() => navigate("/login", { replace: true })}>
               Back to Login
             </button>
           </div>
         ) : (
           <>
-            <h2>Completing OIDC Login...</h2>
-            <div style={{ margin: "2rem auto", width: 48, height: 48 }}>
+            <h2 className="text-2xl font-bold mb-8">Completing OIDC Login...</h2>
+            <div className="mx-auto w-12 h-12 mb-6">
               <svg
                 width="48"
                 height="48"
@@ -170,7 +111,7 @@ export function OidcCallbackPage() {
                 </path>
               </svg>
             </div>
-            <p>
+            <p className="text-lg">
               Exchanging authorization code for tokens...
               <br />
               Please wait.

@@ -100,162 +100,64 @@ export function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-      }}>
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 12,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-          padding: "2.5rem",
-          maxWidth: 500,
-          width: "100%",
-        }}>
-        <h1 style={{ textAlign: "center", marginBottom: "0.5rem", color: "#1e293b" }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-sm w-full">
+        <h1 className="text-center text-2xl font-bold text-slate-900 mb-2">
           Que-ID Login
         </h1>
-        <p style={{ textAlign: "center", color: "#64748b", marginBottom: "2rem" }}>
+        <p className="text-center text-slate-500 mb-8">
           Select your authentication method
         </p>
 
         {error && (
-          <div
-            style={{
-              background: "#fee2e2",
-              color: "#991b1b",
-              border: "1px solid #fca5a5",
-              borderRadius: 6,
-              padding: "1rem",
-              marginBottom: "1.5rem",
-            }}>
+          <div className="bg-red-50 text-red-900 border border-red-300 rounded-lg p-4 mb-6">
             {error}
           </div>
         )}
         {auth.isLoading && (
-          <div style={{ textAlign: "center", marginBottom: "1.5rem", color: "#64748b" }}>
+          <div className="text-center text-slate-500 mb-6">
             Processing...
           </div>
         )}
 
         {!authMethod ? (
-          <div style={{ display: "grid", gap: "1rem" }}>
+          <div className="space-y-4">
             <button
               onClick={() => setAuthMethod("oidc")}
-              style={{
-                padding: "1.2rem",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                background: "#f8fafc",
-                cursor: "pointer",
-                color: "#111",
-                transition: "all 0.2s",
-                fontSize: "1rem",
-                fontWeight: 500,
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = "#667eea";
-                e.currentTarget.style.background = "#ede9fe";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = "#e2e8f0";
-                e.currentTarget.style.background = "#f8fafc";
-              }}>
-              🔐 Login with OIDC
+              className="w-full p-4 border-2 border-slate-200 rounded-lg bg-slate-50 text-slate-900 font-medium transition-all hover:border-indigo-500 hover:bg-indigo-50">
+               Login with OIDC
             </button>
             <button
               onClick={() => setAuthMethod("saml")}
-              style={{
-                padding: "1.2rem",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                background: "#f8fafc",
-                color: "#111",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                fontSize: "1rem",
-                fontWeight: 500,
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = "#764ba2";
-                e.currentTarget.style.background = "#faf5ff";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = "#e2e8f0";
-                e.currentTarget.style.background = "#f8fafc";
-              }}>
-              🛡️ Login with SAML
+              className="w-full p-4 border-2 border-slate-200 rounded-lg bg-slate-50 text-slate-900 font-medium transition-all hover:border-purple-600 hover:bg-purple-50">
+               Login with SAML
             </button>
           </div>
         ) : authMethod === "oidc" ? (
-          <div style={{ display: "grid", gap: "1rem" }}>
+          <div className="space-y-4">
             <button
               onClick={handleOidcLogin}
               disabled={auth.isLoading}
-              style={{
-                padding: "1.2rem",
-                background: "#667eea",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 500,
-                cursor: "pointer",
-                opacity: auth.isLoading ? 0.7 : 1,
-                fontSize: "1rem",
-              }}>
+              className="w-full p-3 bg-indigo-500 text-white font-medium rounded-lg transition-opacity disabled:opacity-70 hover:bg-indigo-600">
               {auth.isLoading ? "Processing..." : "Login with OIDC"}
             </button>
             <button
               onClick={() => setAuthMethod(null)}
-              style={{
-                padding: "1.2rem",
-                background: "#e2e8f0",
-                color: "#1e293b",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 500,
-                cursor: "pointer",
-                fontSize: "1rem",
-              }}>
+              className="w-full p-3 bg-slate-200 text-slate-900 font-medium rounded-lg hover:bg-slate-300">
               Back
             </button>
           </div>
         ) : (
-          <div style={{ display: "grid", gap: "1rem" }}>
+          <div className="space-y-4">
             <button
               onClick={handleSamlLogin}
               disabled={auth.isLoading}
-              style={{
-                padding: "1.2rem",
-                background: "#764ba2",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 500,
-                cursor: "pointer",
-                opacity: auth.isLoading ? 0.7 : 1,
-                fontSize: "1rem",
-              }}>
+              className="w-full p-3 bg-purple-600 text-white font-medium rounded-lg transition-opacity disabled:opacity-70 hover:bg-purple-700">
               {auth.isLoading ? "Processing..." : "Login with SAML"}
             </button>
             <button
               onClick={() => setAuthMethod(null)}
-              style={{
-                padding: "1.2rem",
-                background: "#e2e8f0",
-                color: "#1e293b",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 500,
-                cursor: "pointer",
-                fontSize: "1rem",
-              }}>
+              className="w-full p-3 bg-slate-200 text-slate-900 font-medium rounded-lg hover:bg-slate-300">
               Back
             </button>
           </div>

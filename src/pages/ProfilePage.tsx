@@ -3,17 +3,11 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 function InfoCard({ label, value }: { label: string; value: string | undefined }) {
   if (!value) return null;
   return (
-    <div style={{ paddingBottom: "1rem", borderBottom: "1px solid #e2e8f0" }}>
-      <label
-        style={{
-          display: "block",
-          color: "#64748b",
-          fontSize: "0.85rem",
-          marginBottom: "0.25rem",
-        }}>
+    <div className="pb-4 border-b border-slate-200">
+      <label className="block text-slate-500 text-sm mb-1">
         {label}
       </label>
-      <p style={{ margin: 0, color: "#1e293b", fontWeight: 500, wordBreak: "break-word" }}>
+      <p className="m-0 text-slate-900 font-medium break-word">
         {value}
       </p>
     </div>
@@ -24,20 +18,12 @@ export function ProfilePage() {
   const auth = useAuthContext();
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "2rem", color: "#1e293b", fontWeight: 700 }}>Your Profile</h1>
+    <div className="p-8 max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold text-slate-900 mb-8">Your Profile</h1>
 
-      <div
-        style={{
-          background: "#fff",
-          border: "1px solid #e2e8f0",
-          borderRadius: 12,
-          padding: "2rem",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          color: "#1e293b",
-        }}>
+      <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm text-slate-900">
         {auth.userInfo ? (
-          <div style={{ display: "grid", gap: "1rem" }}>
+          <div className="space-y-4">
             <InfoCard label="Email" value={auth.userInfo.email} />
             <InfoCard label="Full Name" value={auth.userInfo.name} />
             <InfoCard label="First Name" value={auth.userInfo.given_name} />
@@ -45,85 +31,59 @@ export function ProfilePage() {
             <InfoCard label="Username" value={auth.userInfo.preferred_username} />
             <InfoCard label="User ID (Sub)" value={auth.userInfo.sub} />
             {auth.userInfo.email_verified !== undefined && (
-              <div style={{ paddingBottom: "1rem", borderBottom: "1px solid #e2e8f0" }}>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#64748b",
-                    fontSize: "0.85rem",
-                    marginBottom: "0.25rem",
-                  }}>
+              <div className="pb-4 border-b border-slate-200">
+                <label className="block text-slate-500 text-sm mb-2">
                   Email Verified
                 </label>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div className="flex items-center gap-2">
                   <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "50%",
-                      background: auth.userInfo.email_verified ? "#10b981" : "#ef4444",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      fontSize: "0.75rem",
-                      fontWeight: "bold",
-                    }}>
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                      auth.userInfo.email_verified ? "bg-green-500" : "bg-red-500"
+                    }`}>
                     {auth.userInfo.email_verified ? "✓" : "✕"}
                   </div>
-                  <span style={{ color: "#1e293b", fontWeight: 500 }}>
+                  <span className="text-slate-900 font-medium">
                     {auth.userInfo.email_verified ? "Verified" : "Not Verified"}
                   </span>
                 </div>
               </div>
             )}
 
-            <div
-              style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "2px solid #e2e8f0" }}>
-              <h3 style={{ color: "#1e293b", marginBottom: "1rem", fontWeight: 600 }}>
+            <div className="mt-6 pt-6 border-t-2 border-slate-200">
+              <h3 className="text-slate-900 mb-4 font-semibold">
                 Additional Information
               </h3>
-              <div style={{ display: "grid", gap: "0.75rem" }}>
+              <div className="space-y-3">
                 <div>
-                  <span style={{ color: "#64748b", fontSize: "0.85rem" }}>
+                  <span className="text-slate-500 text-sm">
                     Authentication Method:
                   </span>
-                  <p style={{ margin: 0, color: "#1e293b", fontWeight: 500 }}>
+                  <p className="m-0 text-slate-900 font-medium">
                     {auth.authMethod?.toUpperCase() || "Unknown"}
                   </p>
                 </div>
                 <div>
-                  <span style={{ color: "#64748b", fontSize: "0.85rem" }}>Account Status:</span>
-                  <p style={{ margin: 0, color: "#1e293b", fontWeight: 500 }}>
+                  <span className="text-slate-500 text-sm">Account Status:</span>
+                  <p className="m-0 text-slate-900 font-medium">
                     {auth.isAuthenticated ? "✓ Active" : "✕ Inactive"}
                   </p>
                 </div>
               </div>
             </div>
 
-            <details style={{ marginTop: "1.5rem", cursor: "pointer" }}>
-              <summary style={{ color: "#667eea", fontWeight: 500 }}>
+            <details className="mt-6 cursor-pointer">
+              <summary className="text-indigo-600 font-medium hover:text-indigo-700">
                 View Raw User Data (Dev)
               </summary>
-              <pre
-                style={{
-                  background: "#f8fafc",
-                  padding: "1rem",
-                  borderRadius: 6,
-                  border: "1px solid #e2e8f0",
-                  overflow: "auto",
-                  maxHeight: 300,
-                  fontSize: "0.75rem",
-                  marginTop: "1rem",
-                }}>
+              <pre className="bg-slate-50 p-4 rounded-lg border border-slate-200 overflow-auto max-h-80 text-xs mt-4">
                 {JSON.stringify(auth.userInfo, null, 2)}
               </pre>
             </details>
           </div>
         ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#334155" }}>
+          <div className="text-center py-8 text-slate-600">
             <p>No user profile information available.</p>
-            <p style={{ fontSize: "0.9rem" }}>Please ensure you are logged in.</p>
+            <p className="text-sm">Please ensure you are logged in.</p>
           </div>
         )}
       </div>

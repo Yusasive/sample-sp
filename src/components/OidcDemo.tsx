@@ -3,8 +3,8 @@ import type { OidcConfig } from "@/types/auth";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 
-const getApiIssuer = (issuer: string) =>
-  issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
+// const getApiIssuer = (issuer: string) =>
+//   issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
 const defaultConfig: OidcConfig = {
   issuer: getApiIssuer(import.meta.env.VITE_OIDC_ISSUER_URL || ""),
   clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",

@@ -4,10 +4,10 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { useOidcAuth } from "@/hooks/useOidcAuth";
 import type { OidcConfig } from "@/types/auth";
 
-const getApiIssuer = (issuer: string) =>
-  issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
+// const getApiIssuer = (issuer: string) =>
+//   issuer.includes("/api/") ? issuer : issuer.replace("://uni-que.id/", "://uni-que.id/api/");
 const oidcConfig: OidcConfig = {
-  issuer: getApiIssuer(import.meta.env.VITE_OIDC_ISSUER_URL || ""),
+  issuer: import.meta.env.VITE_OIDC_ISSUER_URL || "",
   clientId: import.meta.env.VITE_OIDC_CLIENT_ID || "",
   redirectUri:
     import.meta.env.VITE_OIDC_REDIRECT_URI &&

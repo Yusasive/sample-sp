@@ -68,4 +68,4 @@ names only.
 
 ---
 
-For questions or support, contact the Que-ID team or refer to the official documentation.
+
